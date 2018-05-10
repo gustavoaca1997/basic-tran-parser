@@ -2,18 +2,18 @@
 module Main (main) where
 }
 
-%wrapper "basic"
+%wrapper "posn"
 
 tokens :-
 
-  $white+				;
-  True                  {\s -> TkTrue}
-  False                 {\s -> TkFalse}
+  $white+       ;
+  True          {\ap s -> TkTrue ap}
+  False         {\ap s -> TkFalse ap}
 
 {
 data Token =
-    TkTrue
-    | TkFalse
+    TkTrue AlexPosn
+    | TkFalse AlexPosn
     deriving (Show)
 
 main = do
