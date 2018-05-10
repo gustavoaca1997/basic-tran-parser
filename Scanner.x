@@ -14,7 +14,10 @@ tokens :-
 data Token =
     TkTrue AlexPosn
     | TkFalse AlexPosn
-    deriving (Show)
+    
+instance Show Token where
+  show (TkTrue (AlexPn _ l c)) = "TkTrue " ++ show l ++ " " ++ show c
+  show (TkFalse (AlexPn _ l c)) = "TkFalse " ++ show l ++ " " ++ show c  
 
 main = do
   s <- getContents
