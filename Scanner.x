@@ -187,17 +187,6 @@ instance Show TkObject where
 
 -- Acciones IO
 
--- Imprimir los tokens en el formato especificado
--- print_action s =
---   putStr (intercalate "" 
---     (init [ intercalate "" (columnas linea) ++ "\n" | linea <- [1..length tokens]])
---   )
---       where
---         tokens = alexScanTokens s                                                   -- [TkObject]
---         columnas linea = map (\tk -> show tk ++ final tk linea) $ cols linea        -- [show TkObject]
---         final tk linea = if tk /= last (cols linea) then ", " else ""               -- ", " o ""
---         cols linea' = filter (\(TkObject _ (AlexPn _ l _)) -> l == linea') tokens   -- columnas de la fila
-
 group :: [TkObject] -> [[TkObject]]
 group [] = []
 --group [a] = [[a]]
