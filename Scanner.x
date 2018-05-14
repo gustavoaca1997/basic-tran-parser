@@ -41,7 +41,18 @@ tokens :-
   false             {\ap s -> TkObject TkFalse ap}
 
   -- separadores
-
+  \,                 {\ap s -> TkObject TkComa ap}
+  \.                {\ap s -> TkObject TkPunto ap}
+  \;                {\ap s -> TkObject TkPuntoYComa ap}
+  :                 {\ap s -> TkObject TkDosPuntos ap}
+  \(                {\ap s -> TkObject TkParAbre ap}
+  \)                {\ap s -> TkObject TkParCierra ap}
+  \[                {\ap s -> TkObject TkCorcheteAbre ap}
+  \]                {\ap s -> TkObject TkCorcheteCierra ap}
+  \{                {\ap s -> TkObject TkLlaveAbre ap}
+  \}                {\ap s -> TkObject TkLlaveCierra ap}
+  \-\>               {\ap s -> TkObject TkHacer ap}
+  \<\-               {\ap s -> TkObject TkAsignacion ap}
 
   -- Cualquier cosa
   .                 {\ap s -> TkObject (TkErr s) ap}
@@ -88,13 +99,27 @@ data Token =
 
     -- Literales
     | TkCaracter String
-    | TkDosPuntos
-    | TkAsignacion
     | TkTrue
     | TkId String
     | TkFalse
-    | TkErr String
     | TkNum String
+
+    -- Separadores
+    | TkComa
+    | TkPunto
+    | TkPuntoYComa
+    | TkDosPuntos
+    | TkParAbre
+    | TkParCierra
+    | TkCorcheteAbre
+    | TkCorcheteCierra
+    | TkLlaveAbre
+    | TkLlaveCierra
+    | TkHacer
+    | TkAsignacion
+
+    -- Error
+    | TkErr String
     deriving (Eq, Show)
 
 
