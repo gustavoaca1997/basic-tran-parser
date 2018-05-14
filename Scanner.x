@@ -4,17 +4,37 @@ module Main (main) where
 
 %wrapper "posn"
 
+$letras = [a-zA-Z]
+$numeros = 0-9
+$alphanum = [a-zA-Z0-9]
+
 tokens :-
   -- spaces
   $white+       ;
+  -- Palabras reservadas
+  with              {\ap s -> TkObject TkWith ap}
+  end               {\ap s -> TkObject TkEnd ap}
+  var               {\ap s -> TkObject TkVar ap}
+  while             {\ap s -> TkObject TkWhile ap}
+  for               {\ap s -> TkObject TkFor ap}
+  begin             {\ap s -> TkObject TkBegin ap}
+  read              {\ap s -> TkObject TkRead ap}
+  print             {\ap s -> TkObject TkPrint ap}
+
+  -- Tipos
+  bool              {\ap s -> TkObject TkBool ap}
+  int               {\ap s -> TkObject TkInt ap}
+  char              {\ap s -> TkObject TkChar ap}
+  array             {\ap s -> TkObject TkArray ap}
 
   -- numbers
   [0-9]+[a-zA-Z]+   {\ap s -> TkObject (TkErr s) ap}
   [0-9]+            {\ap s -> TkObject (TkNum s) ap}
 
   -- Booleans
-  True              {\ap s -> TkObject TkTrue ap}
-  False             {\ap s -> TkObject TkFalse ap}
+  true              {\ap s -> TkObject TkTrue ap}
+  false             {\ap s -> TkObject TkFalse ap}
+
 
   -- Cualquier cosa
   .                 {\ap s -> TkObject (TkErr s) ap}
@@ -40,7 +60,30 @@ intercalate xs xss = concat (intersperse xs xss)
 
 -- tipos de token
 data Token =
-    TkTrue
+  -- Palabras Reservadas
+    TkWith
+    | TkEnd
+    | TkVar
+    | TkWhile
+    | TkFor
+    | TkIf
+    | TkOtherwise
+    | TkOf
+    | TkBegin
+    | TkPrint
+    | TkRead
+
+    -- Tipos
+    | TkInt
+    | TkBool
+    | TkChar
+    | TkArray
+
+
+    | TkDosPuntos
+    | TkAsignacion
+    | TkTrue
+    | TkId String
     | TkFalse
     | TkErr String
     | TkNum String
@@ -52,6 +95,8 @@ data TkObject = TkObject Token AlexPosn deriving (Eq)
 instance Show TkObject where
   -- Ejm: TkNum(30) 3 2
   show (TkObject (TkNum num) (AlexPn _ l c)) = "TkNum(" ++ num ++ ") " ++ show l ++ " " ++ show c
+  -- Ejm: TkId('beta') 3 2
+  show (TkObject (TkId i) (AlexPn _ l c)) = "TkId(" ++ i ++ ") " ++ show l ++ " " ++ show c
   -- Ejm: Error: Caracter inesperado '?' en la fila 3 2
   show (TkObject (TkErr tk) (AlexPn _ l c)) = "Error: Caracter inesperado " ++ show (tk!!0) ++ " en la fila " ++ show l ++ ", columna " ++ show c
   -- Ejm: TkWhile 3 2
