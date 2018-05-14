@@ -75,6 +75,9 @@ tokens :-
   \#                 {\ap s -> TkObject TkValorAscii ap}
   \$                {\ap s -> TkObject TkShift ap}
 
+  -- id
+  $letras($alphanum*)   {\ap s -> TkObject (TkId s) ap}
+
   -- Cualquier cosa
   .                 {\ap s -> TkObject (TkErr s) ap}
 {
@@ -171,7 +174,7 @@ instance Show TkObject where
   -- Ejm: TkNum(30) 3 2
   show (TkObject (TkNum num) (AlexPn _ l c)) = "TkNum(" ++ num ++ ") " ++ show l ++ " " ++ show c
   -- Ejm: TkId('beta') 3 2
-  show (TkObject (TkId i) (AlexPn _ l c)) = "TkId(" ++ i ++ ") " ++ show l ++ " " ++ show c
+  show (TkObject (TkId i) (AlexPn _ l c)) = "TkId(" ++ show i ++ ") " ++ show l ++ " " ++ show c
   -- Ejm: Error: Caracter inesperado '?' en la fila 3 2
   show (TkObject (TkErr tk) (AlexPn _ l c)) = "Error: Caracter inesperado " ++ show (tk!!0) ++ " en la fila " ++ show l ++ ", columna " ++ show c
   -- Ejm: TkCaracter('p') 2 3
