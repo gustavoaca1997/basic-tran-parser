@@ -34,9 +34,13 @@ tokens :-
   -- caracteres
   '.'               {\ap s -> TkObject (TkCaracter s) ap}
   '\\[\\nt\']'      {\ap s -> TkObject (TkCaracter s) ap}
+
+  -- 
   -- Booleans
   true              {\ap s -> TkObject TkTrue ap}
   false             {\ap s -> TkObject TkFalse ap}
+
+  -- separadores
 
 
   -- Cualquier cosa
@@ -103,6 +107,8 @@ instance Show TkObject where
   show (TkObject (TkId i) (AlexPn _ l c)) = "TkId(" ++ i ++ ") " ++ show l ++ " " ++ show c
   -- Ejm: Error: Caracter inesperado '?' en la fila 3 2
   show (TkObject (TkErr tk) (AlexPn _ l c)) = "Error: Caracter inesperado " ++ show (tk!!0) ++ " en la fila " ++ show l ++ ", columna " ++ show c
+  -- Ejm: TkCaracter('p') 2 3
+  show (TkObject (TkCaracter s) (AlexPn _ l c)) = "TkCaracter(" ++ s ++ ") " ++ show l ++ " " ++ show c
   -- Ejm: TkWhile 3 2
   show (TkObject tk (AlexPn _ l c)) = show tk ++ " " ++ show l ++ " " ++ show c
 
