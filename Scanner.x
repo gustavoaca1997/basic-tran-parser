@@ -188,15 +188,31 @@ instance Show TkObject where
 -- Acciones IO
 
 -- Imprimir los tokens en el formato especificado
-print_action s =
-  putStr (intercalate "" 
-    (init [ intercalate "" (columnas linea) ++ "\n" | linea <- [1..length tokens]])
-  )
-      where
-        tokens = alexScanTokens s                                                   -- [TkObject]
-        columnas linea = map (\tk -> show tk ++ final tk linea) $ cols linea        -- [show TkObject]
-        final tk linea = if tk /= last (cols linea) then ", " else ""               -- ", " o ""
-        cols linea' = filter (\(TkObject _ (AlexPn _ l _)) -> l == linea') tokens   -- columnas de la fila
+-- print_action s =
+--   putStr (intercalate "" 
+--     (init [ intercalate "" (columnas linea) ++ "\n" | linea <- [1..length tokens]])
+--   )
+--       where
+--         tokens = alexScanTokens s                                                   -- [TkObject]
+--         columnas linea = map (\tk -> show tk ++ final tk linea) $ cols linea        -- [show TkObject]
+--         final tk linea = if tk /= last (cols linea) then ", " else ""               -- ", " o ""
+--         cols linea' = filter (\(TkObject _ (AlexPn _ l _)) -> l == linea') tokens   -- columnas de la fila
+
+group :: [TkObject] -> [[TkObject]]
+group [] = []
+--group [a] = [[a]]
+group ent@((TkObject _ (AlexPn _ a _)):_) = equalA:(group rest)
+  where equalA = takeWhile (\(TkObject _ (AlexPn _ a' _)) -> a' == a) ent
+        rest = drop (length equalA) ent
+
+formatln' :: [TkObject] -> String
+formatln' xs = concatMap (\tk -> show tk ++ final tk) xs
+        where final tk = if tk /= last xs then ", " else "\n"
+
+formatln :: [[TkObject]] -> String
+formatln = concatMap (formatln')
+
+print_action = putStr . formatln . group . alexScanTokens
 
 ------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------
