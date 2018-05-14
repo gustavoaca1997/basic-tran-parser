@@ -1,5 +1,6 @@
 {
 module Main (main) where
+import System.Environment
 }
 
 %wrapper "posn"
@@ -81,23 +82,6 @@ tokens :-
   -- Cualquier cosa
   .                 {\ap s -> TkObject (TkErr s) ap}
 {
-------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------
--- Funciones necesarias de Data.List
-prependToAll            :: a -> [a] -> [a]
-prependToAll _   []     = []
-prependToAll sep (x:xs) = sep : x : prependToAll sep xs
-
-intersperse             :: a -> [a] -> [a]
-intersperse _   []      = []
-intersperse sep (x:xs)  = x : prependToAll sep xs
-
-intercalate :: [a] -> [[a]] -> [a]
-intercalate xs xss = concat (intersperse xs xss)
-
-------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------
-
 -- Codigo
 
 -- tipos de token
@@ -201,12 +185,15 @@ formatln' xs = concatMap (\tk -> show tk ++ final tk) xs
 formatln :: [[TkObject]] -> String
 formatln = concatMap (formatln')
 
+print_action :: String -> IO()
 print_action = putStr . formatln . group . alexScanTokens
 
 ------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------
 
+main :: IO()
 main = do
-  s <- getContents;
-  print_action s;
+  args <- getArgs
+  filecontents <- readFile $ head args
+  print_action filecontents;
 }
