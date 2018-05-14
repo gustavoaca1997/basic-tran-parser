@@ -31,6 +31,9 @@ tokens :-
   [0-9]+[a-zA-Z]+   {\ap s -> TkObject (TkErr s) ap}
   [0-9]+            {\ap s -> TkObject (TkNum s) ap}
 
+  -- caracteres
+  '.'               {\ap s -> TkObject (TkCaracter s) ap}
+  '\\[\\nt\']'      {\ap s -> TkObject (TkCaracter s) ap}
   -- Booleans
   true              {\ap s -> TkObject TkTrue ap}
   false             {\ap s -> TkObject TkFalse ap}
@@ -79,7 +82,8 @@ data Token =
     | TkChar
     | TkArray
 
-
+    -- Literales
+    | TkCaracter String
     | TkDosPuntos
     | TkAsignacion
     | TkTrue
