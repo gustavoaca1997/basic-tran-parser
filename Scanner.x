@@ -185,9 +185,12 @@ formatln' xs = concatMap (\tk -> show tk ++ final tk) xs
 formatln :: [[TkObject]] -> String
 formatln = concatMap (formatln')
 
-print_action :: String -> IO()
-print_action = putStr . formatln . group . alexScanTokens
+print_action :: [TkObject] -> IO()
+print_action = putStr . formatln . group
 
+isError :: TkObject -> Bool
+isError (TkObject (TkErr _) _) = True
+isError _ = False
 ------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------
 
@@ -195,5 +198,7 @@ main :: IO()
 main = do
   args <- getArgs
   filecontents <- readFile $ head args
-  print_action filecontents;
+  let tokens = alexScanTokens filecontents
+  let errors = filter isError tokens
+  if length errors > 0 then print_action errors else print_action tokens
 }
