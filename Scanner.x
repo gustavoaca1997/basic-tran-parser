@@ -44,6 +44,7 @@ tokens :-
   \,                 {\ap s -> TkObject TkComa ap}
   \.                {\ap s -> TkObject TkPunto ap}
   \;                {\ap s -> TkObject TkPuntoYComa ap}
+  ::                {\ap s -> TkObject TkConcatenacion ap}
   :                 {\ap s -> TkObject TkDosPuntos ap}
   \(                {\ap s -> TkObject TkParAbre ap}
   \)                {\ap s -> TkObject TkParCierra ap}
@@ -53,6 +54,26 @@ tokens :-
   \}                {\ap s -> TkObject TkLlaveCierra ap}
   \-\>               {\ap s -> TkObject TkHacer ap}
   \<\-               {\ap s -> TkObject TkAsignacion ap}
+
+  -- Operadores
+  \+\+              {\ap s -> TkObject TkSiguienteCar ap}
+  \+                {\ap s -> TkObject TkSuma ap}
+  \-\-              {\ap s -> TkObject TkAnteriorCar ap}
+  \-                {\ap s -> TkObject TkResta ap}
+  \*                {\ap s -> TkObject TkMult ap}
+  \/                 {\ap s -> TkObject TkDiv ap}
+  \%                 {\ap s -> TkObject TkMod ap}
+  \/\\               {\ap s -> TkObject TkConjuncion ap}
+  \\\/               {\ap s -> TkObject TkDisyuncion ap}
+  not               {\ap s -> TkObject TkNegacion ap}
+  \/=                {\ap s -> TkObject TkDesigual ap}
+  \<                {\ap s -> TkObject TkMenor ap}
+  \<=                {\ap s -> TkObject TkMenorIgual ap}
+  \>                {\ap s -> TkObject TkMayor ap}
+  \>=                {\ap s -> TkObject TkMayorIgual ap}
+  =                 {\ap s -> TkObject TkIgual ap}
+  \#                 {\ap s -> TkObject TkValorAscii ap}
+  \$                {\ap s -> TkObject TkShift ap}
 
   -- Cualquier cosa
   .                 {\ap s -> TkObject (TkErr s) ap}
@@ -117,6 +138,27 @@ data Token =
     | TkLlaveCierra
     | TkHacer
     | TkAsignacion
+
+    -- Operadores
+    | TkSuma
+    | TkResta
+    | TkMult
+    | TkDiv
+    | TkMod
+    | TkConjuncion
+    | TkDisyuncion
+    | TkNegacion
+    | TkDesigual
+    | TkMenor
+    | TkMenorIgual
+    | TkMayor
+    | TkMayorIgual
+    | TkIgual
+    | TkSiguienteCar
+    | TkAnteriorCar
+    | TkValorAscii
+    | TkConcatenacion
+    | TkShift
 
     -- Error
     | TkErr String
