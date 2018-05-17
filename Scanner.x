@@ -7,7 +7,8 @@ import System.Environment
 
 $letras = [a-zA-Z]
 $numeros = 0-9
-$alphanum = [a-zA-Z0-9]
+$alphanum = [a-zA-Z0-9\_]
+$characters = [^\\\']
 
 tokens :-
   -- spaces
@@ -18,6 +19,9 @@ tokens :-
   var               {\ap s -> TkObject TkVar ap}
   while             {\ap s -> TkObject TkWhile ap}
   for               {\ap s -> TkObject TkFor ap}
+  from              {\ap s -> TkObject TkFrom ap}
+  to                {\ap s -> TkObject TkTo ap}
+  step              {\ap s -> TkObject TkStep ap}
   begin             {\ap s -> TkObject TkBegin ap}
   read              {\ap s -> TkObject TkRead ap}
   print             {\ap s -> TkObject TkPrint ap}
@@ -33,14 +37,12 @@ tokens :-
   array             {\ap s -> TkObject TkArray ap}
 
   -- numbers
-  [0-9]+[a-zA-Z]+   {\ap s -> TkObject (TkErr s) ap}
-  [0-9]+            {\ap s -> TkObject (TkNum s) ap}
+  $numeros+            {\ap s -> TkObject (TkNum s) ap}
 
   -- caracteres
-  '.'               {\ap s -> TkObject (TkCaracter s) ap}
+  '($characters)'               {\ap s -> TkObject (TkCaracter s) ap}
   '\\[\\nt\']'      {\ap s -> TkObject (TkCaracter s) ap}
 
-  -- 
   -- Booleans
   true              {\ap s -> TkObject TkTrue ap}
   false             {\ap s -> TkObject TkFalse ap}
@@ -195,6 +197,9 @@ formatln = concatMap (formatln')
 print_action :: [TkObject] -> IO()
 print_action = putStr . formatln . group
 
+print_errors :: [TkObject] -> IO()
+print_errors = putStr . formatln . map (\a -> [a])
+
 isError :: TkObject -> Bool
 isError (TkObject (TkErr _) _) = True
 isError _ = False
@@ -207,5 +212,5 @@ main = do
   filecontents <- readFile $ head args
   let tokens = alexScanTokens filecontents
   let errors = filter isError tokens
-  if length errors > 0 then print_action errors else print_action tokens
+  if length errors > 0 then print_errors errors else print_action tokens
 }
