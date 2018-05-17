@@ -21,6 +21,10 @@ tokens :-
   begin             {\ap s -> TkObject TkBegin ap}
   read              {\ap s -> TkObject TkRead ap}
   print             {\ap s -> TkObject TkPrint ap}
+  from              {\ap s -> TkObject TkFrom ap}
+  to                {\ap s -> TkObject TkTo ap}
+  step              {\ap s -> TkObject TkStep ap}
+  of                {\ap s -> TkObject TkOf ap}
 
   -- Tipos
   bool              {\ap s -> TkObject TkBool ap}
@@ -92,6 +96,9 @@ data Token =
     | TkVar
     | TkWhile
     | TkFor
+    | TkFrom
+    | TkTo
+    | TkStep
     | TkIf
     | TkOtherwise
     | TkOf
