@@ -29,6 +29,8 @@ tokens :-
   to                {\ap s -> TkObject TkTo ap}
   step              {\ap s -> TkObject TkStep ap}
   of                {\ap s -> TkObject TkOf ap}
+  if                {\ap s -> TkObject TkIf ap}
+  otherwise                {\ap s -> TkObject TkOtherwise ap}
 
   -- Tipos
   bool              {\ap s -> TkObject TkBool ap}
