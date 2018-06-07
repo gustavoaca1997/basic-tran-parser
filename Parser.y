@@ -71,8 +71,13 @@ not         { TkObject TkNegacion _ }
 '::'        { TkObject TkConcatenacion _ }
 '$'         { TkObject TkShift _ }
 
+-- Precedencias
+%left '+' '-'
+%left '*' '/' '%'
 -- Grammar
 %%
+
+
 -- Variable Inicial
 Exp: With Variables                                { Exp $1 $2 }
 
@@ -91,9 +96,20 @@ Tipo : int  { TipoPrimitivo $1 }
     | array '[' ExpArit ']' of Tipo { TipoArreglo $1 $3 $6  }
 
 -- Expresion Arimetica
-ExpArit : id    { $1 }
-        | num   { $1 }
+ExpArit : ExpArit '+' ExpArit     { Suma $1 $3 }
+        | ExpArit '-' ExpArit     { Resta $1 $3 }
+        | ExpArit '*' ExpArit     { Mult $1 $3 }
+        | ExpArit '/' ExpArit     { Div $1 $3 }
+        | ExpArit '%' ExpArit     { Mod $1 $3 }
+        | Menos ExpArit           { MenosUnario $2 }
+        | ParenAbre ExpArit ')'   { $2 }
+        | Id                      { IdArit $1 }
+        | Num                     { LitArit $1 }
 
+Menos : '-'                       { $1 }
+Id    : id                        { $1 }
+Num   : num                       { $1 }
+ParenAbre : '('                   { $1 }
 -- Lista de las variables a declarar e inicializar
 Identificadores : Identificadores ',' Inicializacion        { $3:$1 }
                 | Inicializacion                            { [$1] }
@@ -107,9 +123,11 @@ Instruccion : {- lambda -}                                { [] }
 
 -- Literales
 Literal : caracter { $1 }
-        | true  { $1 } 
-        | false { $1 }
         | num { $1 }
+        | Boolean { $1 }
+
+Boolean : true      { $1 }
+        | false     { $1 }
 {
 
 parseError :: [TkObject] -> a
@@ -130,12 +148,23 @@ data Inicializacion
 -- Tipos de datos
 data Tipo =
     TipoPrimitivo TkObject
-    | TipoArreglo TkObject TkObject Tipo
+    | TipoArreglo TkObject ExpArit Tipo
     deriving Show
 
 -- Variables
 data Variables =
     Variables [Inicializacion] Tipo
+    deriving Show
+
+data ExpArit =
+    Suma ExpArit ExpArit
+    | Resta ExpArit ExpArit
+    | Mult ExpArit ExpArit
+    | Div ExpArit ExpArit
+    | Mod ExpArit ExpArit
+    | MenosUnario ExpArit
+    | LitArit TkObject
+    | IdArit  TkObject
     deriving Show
 
 main = getContents >>= print . parser . scanTokens
