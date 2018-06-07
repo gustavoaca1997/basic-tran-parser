@@ -74,8 +74,10 @@ not         { TkObject TkNegacion _ }
 -- Precedencias
 %left '+' '-'
 %left '*' '/' '%'
-%nonassoc '>' '<' '=' '>=' '<=' '/='
 %left NEG
+%nonassoc '>' '<' '=' '>=' '<=' '/='
+%left and or
+%left not
 -- Grammar
 %%
 
