@@ -147,12 +147,18 @@ Inicializacion : id                                       { Declaracion $1 }
 --------------------------------- INSTRUCCIONES -------------------------------
 Instruccion : {- lambda -}                                { EmptyInstr }
             | Condicional                                 { IfInstr $1 }
+            | IterDet                                     { ForInstr $1 }
 
 -- Condicionales
 Condicional : If ExpBool '->' Instruccion end                       { If $2 $4 }
             | If ExpBool '->' Instruccion otherwise Instruccion end { IfOtherwise $2 $4 $6 }
 
+-- Iteracion Determinada
+IterDet : For Id from ExpArit to ExpArit '->' Instruccion end              { For $1 $2 $4 $6 $8 }
+        | For Id from ExpArit to ExpArit step ExpArit '->' Instruccion end { ForStep $1 $2 $4 $6 $8 $10 }
+
 If : if         { $1 }
+For : for       { $1 }
 -- Literales
 Literal : caracter { $1 }
         | num { $1 }
@@ -216,12 +222,29 @@ data ExpBool =
 
 data Instruccion =
     IfInstr IfInstr
+    | ForInstr ForInstr
     | EmptyInstr
     deriving Show
 
 data IfInstr =
     If ExpBool Instruccion
     | IfOtherwise ExpBool Instruccion Instruccion
+    deriving Show
+
+data ForInstr =
+    For
+        TkObject    -- posicion
+        TkObject    -- id
+        ExpArit     -- from
+        ExpArit     -- to
+        Instruccion -- Instruccion
+    | ForStep
+        TkObject    -- posicion
+        TkObject    -- id
+        ExpArit     -- from
+        ExpArit     -- to
+        ExpArit     -- step
+        Instruccion -- Instruccion
     deriving Show
 
 main = getContents >>= print . parser . scanTokens
