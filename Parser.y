@@ -147,9 +147,10 @@ Inicializacion : id                                       { Declaracion $1 }
 --------------------------------- INSTRUCCIONES -------------------------------
 Instruccion : {- lambda -}                                { EmptyInstr }
             | Condicional                                 { IfInstr $1 }
+
 -- Condicionales
-Condicional : If ExpRel '->' Instruccion end                       { If $2 $4 }
-            | If ExpRel '->' Instruccion otherwise Instruccion end { IfOtherwise $2 $4 $6 }
+Condicional : If ExpBool '->' Instruccion end                       { If $2 $4 }
+            | If ExpBool '->' Instruccion otherwise Instruccion end { IfOtherwise $2 $4 $6 }
 
 If : if         { $1 }
 -- Literales
@@ -219,8 +220,8 @@ data Instruccion =
     deriving Show
 
 data IfInstr =
-    If ExpRel Instruccion
-    | IfOtherwise ExpRel Instruccion Instruccion
+    If ExpBool Instruccion
+    | IfOtherwise ExpBool Instruccion Instruccion
     deriving Show
 
 main = getContents >>= print . parser . scanTokens
