@@ -152,6 +152,7 @@ Instruccion : {- lambda -}                                { EmptyInstr }
             | Condicional                                 { IfInstr $1 }
             | IterDet                                     { ForInstr $1 }
             | IteracionInd                                { $1 }
+            | IOInstr                                     { IOInstr $1 }
 
 -- Condicionales
 Condicional : If ExpBool '->' Instruccion end                       { If $2 $4 }
@@ -161,6 +162,12 @@ Condicional : If ExpBool '->' Instruccion end                       { If $2 $4 }
 IterDet : For Id from ExpArit to ExpArit '->' Instruccion end              { For $1 $2 $4 $6 $8 }
         | For Id from ExpArit to ExpArit step ExpArit '->' Instruccion end { ForStep $1 $2 $4 $6 $8 $10 }
 
+-- Instrucciones I/O
+IOInstr : Print Expresion           { Print $1 $2 }
+        | Read  Id                  { Read $1 $2 }
+
+Print : print   { $1 }
+Read : read   { $1 }
 If : if         { $1 }
 For : for       { $1 }
 -- Iteración Indeterminada
@@ -235,10 +242,13 @@ data ExpBool =
     | IdBool TkObject   -- if es_string
     deriving Show
 
+--------------------------------- INSTRUCCIONES -------------------------------
+
 data Instruccion =
     IfInstr IfInstr
     | ForInstr ForInstr
     | WhileInstr ExpBool Instruccion
+    | IOInstr IOInstr
     | EmptyInstr
     deriving Show
 
@@ -261,6 +271,11 @@ data ForInstr =
         ExpArit     -- to
         ExpArit     -- step
         Instruccion -- Instruccion
+    deriving Show
+
+data IOInstr =
+    Print TkObject Expresion
+    | Read TkObject TkObject
     deriving Show
 
 main = getContents >>= print . parser . scanTokens
