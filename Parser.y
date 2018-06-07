@@ -116,8 +116,8 @@ Identificadores : Identificadores ',' Inicializacion        { $3:$1 }
 
 -- (identificador, literal o identificador)
 Inicializacion : id                                       { Declaracion $1 }
-                | id '<-' Literal                         { Inicializacion $1 $3 }
-                | id '<-' id                              { Inicializacion $1 $3 }
+                | id '<-' Literal                         { Asignacion $1 (LitArit $3) }
+                | id '<-' ExpArit                          { Asignacion $1 $3 }
 
 Instruccion : {- lambda -}                                { [] }
 
@@ -141,7 +141,7 @@ data Exp
 
 -- Para la declariacion o inicializacion de una variable
 data Inicializacion
-    = Inicializacion TkObject TkObject -- id <- n
+    = Asignacion TkObject ExpArit -- id <- n, id <- 2 + x
     | Declaracion TkObject              -- id
     deriving Show
 
