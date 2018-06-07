@@ -32,11 +32,11 @@ char        { TkObject TkChar _ }
 array       { TkObject TkArray _ }
 
 -- Literales
-caracter    { TkObject (TkCaracter $$) _ }
+caracter    { TkObject (TkCaracter _) _ }
 true        { TkObject TkTrue _ }
 id          { TkObject (TkId _) _ }
 false       { TkObject TkFalse _ }
-num         { TkObject (TkNum $$) _ }
+num         { TkObject (TkNum _) _ }
 
 -- Separadores
 ','         { TkObject TkComa _ }
@@ -74,18 +74,35 @@ not         { TkObject TkNegacion _ }
 -- Grammar
 -- var no puede aparecer de primero
 %%
-Exp: With Variables              { Exp $1 $2 }
-With : with                             { $1 }
-Variables : var Identificadores          { reverse $2 }
-Identificadores : Identificadores ',' id     { $3:$1 }
-                | id                     { [$1] }
+Exp: With Variables                                         { Exp $1 $2 }
+
+With : with                                                 { $1 }
+
+Variables : var Identificadores                             { reverse $2 }
+
+Identificadores : Identificadores ',' Inicializacion        { $3:$1 }
+                | Inicializacion                            { [$1] }
+
+Inicializacion : id                                         { Declaracion $1 }
+                | id '<-' Valor                            { Inicializacion $1 $3 }
+
+Valor : caracter { $1 }
+    | true  { $1 } 
+    | false { $1 }
+    | num { $1 }
+    | id { $1 }
 {
 
 parseError :: [TkObject] -> a
 parseError _ = error "Parse error"
 
 data Exp
-    = Exp TkObject [TkObject]
+    = Exp TkObject [Inicializacion]
+    deriving Show
+
+data Inicializacion
+    = Inicializacion TkObject TkObject -- id <- n
+    | Declaracion TkObject              -- id
     deriving Show
 
 main = getContents >>= print . parser . scanTokens
