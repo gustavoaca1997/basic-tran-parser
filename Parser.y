@@ -83,7 +83,7 @@ not         { TkObject TkNegacion _ }
 
 
 -- Variable Inicial
-Exp: Expresion                               { $1 }
+S: IncAlcance                { Programa $1 }
 
 With : with                                        { $1 }
 
@@ -126,7 +126,7 @@ ExpRel : ExpArit '<'  ExpArit     { MenorQue $1 $2 $3 }
        | ExpArit '/=' ExpArit     { Distinto $1 $2 $3 }
 
 -- Expresiones Booleanas
-ExpBool : ExpRel                            { Relacion $1 }   
+ExpBool : ExpRel                            { Relacion $1 }
         | ExpBool OperadorLogico ExpBool    { OperacionLogica $1 $2 $3 }
         | id                                { IdBool $1 }
         | '(' ExpBool ')'                   { $2 }
@@ -165,13 +165,15 @@ Identificadores : Identificadores ',' Inicializacion        { $3:$1 }
 -- (identificador, literal o identificador)
 Inicializacion : id                                       { Declaracion $1 }
                 | Asignacion                              { $1 }
+
 --------------------------------- INSTRUCCIONES -------------------------------
 Instruccion : {- lambda -}                                { EmptyInstr }
             | Condicional                                 { IfInstr $1 }
             | IterDet                                     { ForInstr $1 }
             | IteracionInd                                { $1 }
-            | IOInstr                                       { IOInstr $1 }
-            | Asignacion                                  { AsignacionInstr $1 }  
+            | Asignacion                                  { AsignacionInstr $1 }
+            | IOInstr                                     { IOInstr $1 }
+            | IncAlcance                                  { IncAlcanceInstr $1 }
 
 -- Condicionales
 Condicional : If ExpBool '->' Instruccion end                       { If $2 $4 }
@@ -191,14 +193,20 @@ Asignacion :
     | id '<-' ExpArit                          { Asignacion $1 (ExpArit $3) }
     | id '<-' ExpBool                          { Asignacion $1 (ExpBool $3) }
 
+-- Iteración Indeterminada
+IteracionInd : While ExpBool '->' Instruccion end            { WhileInstr $2 $4 }
+
+-- Alcance
+IncAlcance : With Variables begin Instruccion end            { ConDeclaracion $1 $2 $4 }
+           | Begin Instruccion end                           { SinDeclaracion $1 $2 }
+
+Begin : begin   { $1 }
+While : while   { $1 }
 Print : print   { $1 }
 Read : read   { $1 }
 If : if         { $1 }
 For : for       { $1 }
--- Iteración Indeterminada
-IteracionInd : While ExpBool '->' Instruccion end            { WhileInstr $2 $4 }
 
-While : while   { $1 }
 -- Literales
 Literal : caracter { $1 }
         | num { $1 }
@@ -213,8 +221,8 @@ parseError _ = error "Parse error"
 
 -- Tipos de datos a retornar
 -- Variable inicial
-data Exp
-    = Exp TkObject [Variables]
+data Programa
+    =  Programa IncAlcanceInstr
     deriving Show
 
 -- Para la declariacion o inicializacion de una variable
@@ -294,6 +302,8 @@ data Instruccion =
     | WhileInstr ExpBool Instruccion
     | IOInstr IOInstr
     | AsignacionInstr Inicializacion
+    | IncAlcanceInstr IncAlcanceInstr
+    -- | Asignacion (ver arriba en inicializacion)
     | EmptyInstr
     deriving Show
 
@@ -323,5 +333,8 @@ data IOInstr =
     | Read TkObject TkObject
     deriving Show
 
-
+data IncAlcanceInstr =
+    ConDeclaracion TkObject [Variables] Instruccion
+    | SinDeclaracion TkObject Instruccion
+    deriving Show
 }
