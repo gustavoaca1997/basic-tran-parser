@@ -74,12 +74,14 @@ not         { TkObject TkNegacion _ }
 -- Precedencias
 %left '+' '-'
 %left '*' '/' '%'
+%nonassoc '>' '<' '=' '>=' '<=' '/='
+%left NEG
 -- Grammar
 %%
 
 
 -- Variable Inicial
-Exp: With Variables                                { Exp $1 $2 }
+Exp: ExpRel                                { $1 }
 
 With : with                                        { $1 }
 
@@ -95,16 +97,26 @@ Tipo : int  { TipoPrimitivo $1 }
     | bool  { TipoPrimitivo $1 }
     | array '[' ExpArit ']' of Tipo { TipoArreglo $1 $3 $6  }
 
+
+-------------------------------- EXPRESIONES ----------------------------------
+
 -- Expresion Arimetica
 ExpArit : ExpArit '+' ExpArit     { Suma $1 $3 }
         | ExpArit '-' ExpArit     { Resta $1 $3 }
         | ExpArit '*' ExpArit     { Mult $1 $3 }
         | ExpArit '/' ExpArit     { Div $1 $3 }
         | ExpArit '%' ExpArit     { Mod $1 $3 }
-        | Menos ExpArit           { MenosUnario $2 }
+        | Menos ExpArit %prec NEG { MenosUnario $2 }
         | ParenAbre ExpArit ')'   { $2 }
         | Id                      { IdArit $1 }
         | Num                     { LitArit $1 }
+
+ExpRel : ExpArit '<'  ExpArit     { MenorQue $1 $3 }
+       | ExpArit '>'  ExpArit     { MayorQue $1 $3 }
+       | ExpArit '<=' ExpArit     { MenorIgualQue $1 $3 }
+       | ExpArit '>=' ExpArit     { MayorIgualQue $1 $3 }
+       | ExpArit '='  ExpArit     { Igual $1 $3 }
+       | ExpArit '/=' ExpArit     { Distinto $1 $3 }
 
 Menos : '-'                       { $1 }
 Id    : id                        { $1 }
@@ -165,6 +177,15 @@ data ExpArit =
     | MenosUnario ExpArit
     | LitArit TkObject
     | IdArit  TkObject
+    deriving Show
+
+data ExpRel =
+    MenorQue ExpArit ExpArit
+    | MayorQue ExpArit ExpArit
+    | MenorIgualQue ExpArit ExpArit
+    | MayorIgualQue ExpArit ExpArit
+    | Igual ExpArit ExpArit
+    | Distinto ExpArit ExpArit
     deriving Show
 
 main = getContents >>= print . parser . scanTokens
