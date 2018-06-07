@@ -83,7 +83,7 @@ not         { TkObject TkNegacion _ }
 
 
 -- Variable Inicial
-Exp: ExpBool                                { $1 }
+Exp: Instruccion                                { $1 }
 
 With : with                                        { $1 }
 
@@ -148,6 +148,7 @@ Inicializacion : id                                       { Declaracion $1 }
 Instruccion : {- lambda -}                                { EmptyInstr }
             | Condicional                                 { IfInstr $1 }
             | IterDet                                     { ForInstr $1 }
+            | IteracionInd                                { $1 }
 
 -- Condicionales
 Condicional : If ExpBool '->' Instruccion end                       { If $2 $4 }
@@ -159,6 +160,11 @@ IterDet : For Id from ExpArit to ExpArit '->' Instruccion end              { For
 
 If : if         { $1 }
 For : for       { $1 }
+-- Iteración Indeterminada
+IteracionInd : While ExpBool '->' Instruccion end            { WhileInstr $2 $4 }
+
+If : if         { $1 }
+While : while   { $1 }
 -- Literales
 Literal : caracter { $1 }
         | num { $1 }
@@ -223,6 +229,7 @@ data ExpBool =
 data Instruccion =
     IfInstr IfInstr
     | ForInstr ForInstr
+    | WhileInstr ExpBool Instruccion
     | EmptyInstr
     deriving Show
 
