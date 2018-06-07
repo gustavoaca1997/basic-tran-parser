@@ -72,37 +72,67 @@ not         { TkObject TkNegacion _ }
 '$'         { TkObject TkShift _ }
 
 -- Grammar
--- var no puede aparecer de primero
 %%
-Exp: With Variables                                         { Exp $1 $2 }
+-- Variable Inicial
+Exp: With Variables                                { Exp $1 $2 }
 
-With : with                                                 { $1 }
+With : with                                        { $1 }
 
-Variables : var Identificadores                             { reverse $2 }
+-- Declaracion de las variables
+Variables : Var Identificadores ':' Tipo           { Variables (reverse $2) $4 }
 
+Var : var   { $1 }
+
+-- Tipo de dato
+Tipo : int  { TipoPrimitivo $1 }
+    | char  { TipoPrimitivo $1 }
+    | bool  { TipoPrimitivo $1 }
+    | array '[' ExpArit ']' of Tipo { TipoArreglo $1 $3 $6  }
+
+-- Expresion Arimetica
+ExpArit : id    { $1 }
+        | num   { $1 }
+
+-- Lista de las variables a declarar e inicializar
 Identificadores : Identificadores ',' Inicializacion        { $3:$1 }
                 | Inicializacion                            { [$1] }
 
-Inicializacion : id                                         { Declaracion $1 }
-                | id '<-' Valor                            { Inicializacion $1 $3 }
+-- (identificador, literal o identificador)
+Inicializacion : id                                       { Declaracion $1 }
+                | id '<-' Literal                         { Inicializacion $1 $3 }
+                | id '<-' id                              { Inicializacion $1 $3 }
 
-Valor : caracter { $1 }
-    | true  { $1 } 
-    | false { $1 }
-    | num { $1 }
-    | id { $1 }
+-- Literales
+Literal : caracter { $1 }
+        | true  { $1 } 
+        | false { $1 }
+        | num { $1 }
 {
 
 parseError :: [TkObject] -> a
 parseError _ = error "Parse error"
 
+-- Tipos de datos a retornar
+-- Variable inicial
 data Exp
-    = Exp TkObject [Inicializacion]
+    = Exp TkObject Variables
     deriving Show
 
+-- Para la declariacion o inicializacion de una variable
 data Inicializacion
     = Inicializacion TkObject TkObject -- id <- n
     | Declaracion TkObject              -- id
+    deriving Show
+
+-- Tipos de datos
+data Tipo =
+    TipoPrimitivo TkObject
+    | TipoArreglo TkObject TkObject Tipo
+    deriving Show
+
+-- Variables
+data Variables =
+    Variables [Inicializacion] Tipo
     deriving Show
 
 main = getContents >>= print . parser . scanTokens
