@@ -3,6 +3,7 @@ import Lex
 import Parser
 import System.Environment
 
+main :: IO()
 main = do
     args <- getArgs
     filecontents <- readFile $ head args
