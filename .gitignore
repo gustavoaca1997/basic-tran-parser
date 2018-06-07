@@ -2,6 +2,9 @@ Fase 1.pdf
 *.hi
 *.o
 Lex*
+Main*
+!Main.hs
+basictrans
 !Lex.x
 Parser*
 !Parser.y

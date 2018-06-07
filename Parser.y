@@ -1,5 +1,5 @@
 {
-module Main where
+module Parser where
 import Lex
 }
 
@@ -286,6 +286,5 @@ data IOInstr =
     | Read TkObject TkObject
     deriving Show
 
-main = getContents >>= print . parser . scanTokens
 
 }
