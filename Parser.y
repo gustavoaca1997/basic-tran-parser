@@ -171,10 +171,10 @@ Instruccion : {- lambda -}                                { EmptyInstr }
             | Condicional                                 { IfInstr $1 }
             | IterDet                                     { ForInstr $1 }
             | IteracionInd                                { $1 }
-            | Asignacion                                  { AsignacionInstr $1 }
-            | IOInstr                                     { IOInstr $1 }
+            | Asignacion ';'                              { AsignacionInstr $1 }
+            | IOInstr ';'                                 { IOInstr $1 }
             | IncAlcance                                  { IncAlcanceInstr $1 }
-            | PuntoInstr                                  { PuntoInstr $1 }
+            | PuntoInstr ';'                              { PuntoInstr $1 }
             | Instruccion Instruccion                     { Secuenciacion $1 $2 }
 
 -- Condicionales
