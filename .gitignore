@@ -1,5 +1,9 @@
 Fase 1.pdf
-Scanner.hs
-Scanner
 *.hi
 *.o
+Lex*
+!Lex.x
+Parser*
+!Parser.y
+*.txt
+input*
