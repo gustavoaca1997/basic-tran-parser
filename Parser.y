@@ -144,8 +144,14 @@ Inicializacion : id                                       { Declaracion $1 }
                 | id '<-' Literal                         { Asignacion $1 (LitArit $3) }
                 | id '<-' ExpArit                          { Asignacion $1 $3 }
 
-Instruccion : {- lambda -}                                { [] }
+--------------------------------- INSTRUCCIONES -------------------------------
+Instruccion : {- lambda -}                                { EmptyInstr }
+            | Condicional                                 { IfInstr $1 }
+-- Condicionales
+Condicional : If ExpRel '->' Instruccion end                       { If $2 $4 }
+            | If ExpRel '->' Instruccion otherwise Instruccion end { IfOtherwise $2 $4 $6 }
 
+If : if         { $1 }
 -- Literales
 Literal : caracter { $1 }
         | num { $1 }
@@ -205,6 +211,16 @@ data ExpBool =
     Relacion ExpRel -- 2 + n <= x
     | OperacionLogica ExpBool TkObject ExpBool  -- B and (x > 2)
     | IdBool TkObject   -- if es_string
+    deriving Show
+
+data Instruccion =
+    IfInstr IfInstr
+    | EmptyInstr
+    deriving Show
+
+data IfInstr =
+    If ExpRel Instruccion
+    | IfOtherwise ExpRel Instruccion Instruccion
     deriving Show
 
 main = getContents >>= print . parser . scanTokens
