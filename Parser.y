@@ -103,6 +103,8 @@ Inicializacion : id                                       { Declaracion $1 }
                 | id '<-' Literal                         { Inicializacion $1 $3 }
                 | id '<-' id                              { Inicializacion $1 $3 }
 
+Instruccion : {- lambda -}                                { [] }
+
 -- Literales
 Literal : caracter { $1 }
         | true  { $1 } 
