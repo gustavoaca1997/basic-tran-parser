@@ -103,12 +103,12 @@ Tipo : int  { TipoPrimitivo $1 }
 -------------------------------- EXPRESIONES ----------------------------------
 
 -- Expresion Arimetica
-ExpArit : ExpArit '+' ExpArit     { Suma $1 $3 }
-        | ExpArit '-' ExpArit     { Resta $1 $3 }
-        | ExpArit '*' ExpArit     { Mult $1 $3 }
-        | ExpArit '/' ExpArit     { Div $1 $3 }
-        | ExpArit '%' ExpArit     { Mod $1 $3 }
-        | Menos ExpArit %prec NEG { MenosUnario $2 }
+ExpArit : ExpArit '+' ExpArit     { Suma $1 $2 $3 }
+        | ExpArit '-' ExpArit     { Resta $1 $2 $3 }
+        | ExpArit '*' ExpArit     { Mult $1 $2 $3 }
+        | ExpArit '/' ExpArit     { Div $1 $2 $3 }
+        | ExpArit '%' ExpArit     { Mod $1 $2 $3 }
+        | Menos ExpArit %prec NEG { MenosUnario $1 $2 }
         | ParenAbre ExpArit ')'   { $2 }
         | Id                      { IdArit $1 }
         | Num                     { LitArit $1 }
@@ -189,12 +189,12 @@ data Variables =
     deriving Show
 
 data ExpArit =
-    Suma ExpArit ExpArit
-    | Resta ExpArit ExpArit
-    | Mult ExpArit ExpArit
-    | Div ExpArit ExpArit
-    | Mod ExpArit ExpArit
-    | MenosUnario ExpArit
+    Suma ExpArit TkObject ExpArit
+    | Resta ExpArit TkObject ExpArit
+    | Mult ExpArit TkObject ExpArit
+    | Div ExpArit TkObject ExpArit
+    | Mod ExpArit TkObject ExpArit
+    | MenosUnario TkObject ExpArit
     | LitArit TkObject
     | IdArit  TkObject
     deriving Show
