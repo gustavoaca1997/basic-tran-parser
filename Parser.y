@@ -102,6 +102,9 @@ Tipo : int  { TipoPrimitivo $1 }
 
 -------------------------------- EXPRESIONES ----------------------------------
 
+Expresion : ExpArit               { ExpArit $1 }
+        | ExpBool                 { ExpBool $1 }
+
 -- Expresion Arimetica
 ExpArit : ExpArit '+' ExpArit     { Suma $1 $2 $3 }
         | ExpArit '-' ExpArit     { Resta $1 $2 $3 }
@@ -197,6 +200,13 @@ data Tipo =
 -- Variables
 data Variables =
     Variables [Inicializacion] Tipo
+    deriving Show
+
+-------------------------------- EXPRESIONES ----------------------------------
+
+data Expresion =
+    ExpArit ExpArit
+    | ExpBool ExpBool
     deriving Show
 
 data ExpArit =
