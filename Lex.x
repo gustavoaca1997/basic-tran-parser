@@ -1,5 +1,5 @@
 {
-module Main (main) where
+module Lex where
 import System.Environment
 }
 
@@ -201,14 +201,10 @@ print_errors = putStr . formatln . map (\a -> [a])
 isError :: TkObject -> Bool
 isError (TkObject (TkErr _) _) = True
 isError _ = False
+
+scanTokens :: String -> [TkObject]
+scanTokens = alexScanTokens
 ------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------
 
-main :: IO()
-main = do
-  args <- getArgs
-  filecontents <- readFile $ head args
-  let tokens = alexScanTokens filecontents
-  let errors = filter isError tokens
-  if length errors > 0 then print_errors errors else print_action tokens
 }
