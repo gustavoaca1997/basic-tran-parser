@@ -81,7 +81,7 @@ not         { TkObject TkNegacion _ }
 
 
 -- Variable Inicial
-Exp: ExpRel                                { $1 }
+Exp: ExpBool                                { $1 }
 
 With : with                                        { $1 }
 
@@ -117,6 +117,17 @@ ExpRel : ExpArit '<'  ExpArit     { MenorQue $1 $3 }
        | ExpArit '>=' ExpArit     { MayorIgualQue $1 $3 }
        | ExpArit '='  ExpArit     { Igual $1 $3 }
        | ExpArit '/=' ExpArit     { Distinto $1 $3 }
+
+-- Expresiones Booleanas
+ExpBool : ExpRel                            { Relacion $1 }   
+        | ExpBool OperadorLogico ExpBool    { OperacionLogica $1 $2 $3 }
+        | id                                { IdBool $1 }
+        | '(' ExpBool ')'                   { $2 }
+
+OperadorLogico :
+    and { $1 }
+    | or { $1 }
+    | not { $1 }
 
 Menos : '-'                       { $1 }
 Id    : id                        { $1 }
@@ -186,6 +197,12 @@ data ExpRel =
     | MayorIgualQue ExpArit ExpArit
     | Igual ExpArit ExpArit
     | Distinto ExpArit ExpArit
+    deriving Show
+
+data ExpBool =
+    Relacion ExpRel -- 2 + n <= x
+    | OperacionLogica ExpBool TkObject ExpBool  -- B and (x > 2)
+    | IdBool TkObject   -- if es_string
     deriving Show
 
 main = getContents >>= print . parser . scanTokens
