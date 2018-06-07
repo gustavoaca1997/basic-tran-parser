@@ -59,8 +59,6 @@ tokens :-
   \)                {\ap s -> TkObject TkParCierra ap}
   \[                {\ap s -> TkObject TkCorcheteAbre ap}
   \]                {\ap s -> TkObject TkCorcheteCierra ap}
-  \{                {\ap s -> TkObject TkLlaveAbre ap}
-  \}                {\ap s -> TkObject TkLlaveCierra ap}
   \-\>               {\ap s -> TkObject TkHacer ap}
   \<\-               {\ap s -> TkObject TkAsignacion ap}
 
@@ -132,8 +130,6 @@ data Token =
     | TkParCierra
     | TkCorcheteAbre
     | TkCorcheteCierra
-    | TkLlaveAbre
-    | TkLlaveCierra
     | TkHacer
     | TkAsignacion
 
