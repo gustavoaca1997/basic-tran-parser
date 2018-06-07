@@ -128,6 +128,8 @@ ExpBool : ExpRel                            { Relacion $1 }
         | ExpBool OperadorLogico ExpBool    { OperacionLogica $1 $2 $3 }
         | id                                { IdBool $1 }
         | '(' ExpBool ')'                   { $2 }
+        | true                              { LitBool $1 }
+        | false                              { LitBool $1 }
 
 OperadorLogico :
     and { $1 }
@@ -244,6 +246,7 @@ data ExpBool =
     Relacion ExpRel -- 2 + n <= x
     | OperacionLogica ExpBool TkObject ExpBool  -- B and (x > 2)
     | IdBool TkObject   -- if es_string
+    | LitBool TkObject  -- True, False
     deriving Show
 
 --------------------------------- INSTRUCCIONES -------------------------------
