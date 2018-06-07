@@ -105,6 +105,7 @@ Tipo : int  { TipoPrimitivo $1 }
 Expresion : ExpArit               { ExpArit $1 }
         | ExpBool                 { ExpBool $1 }
         | ExpChar                 { ExpChar $1 }
+        | ExpArray                { ExpArray $1 }
 
 -- Expresion Arimetica
 ExpArit : ExpArit '+' ExpArit     { Suma $1 $2 $3 }
@@ -144,6 +145,13 @@ ExpChar : ExpChar '++'          { SiguienteChar $1 $2 }
         | '(' ExpChar ')'               { $2 }
         | id                            { IdChar $1 }
         | caracter                      { LitChar $1 }
+
+-- Expresiones con arreglos
+ExpArray : ExpArray '::' ExpArray       { ConcatenacionArray $1 $2 $3 }
+        | '$' ExpArray                  { ShiftArray $1 $2 }
+        | ExpArray '[' ExpArit ']'      { IndexacionArray $1 $3 }
+        | id                            { IdArray $1 }
+        | '(' ExpArray ')'              { $2 }
 
 
 Menos : '-'                       { $1 }
@@ -232,6 +240,7 @@ data Expresion =
     ExpArit ExpArit
     | ExpBool ExpBool
     | ExpChar ExpChar
+    | ExpArray ExpArray
     deriving Show
 
 data ExpArit =
@@ -268,6 +277,13 @@ data ExpChar =
     | Ascii TkObject ExpChar
     | IdChar TkObject
     | LitChar TkObject
+    deriving Show
+
+data ExpArray =
+    ConcatenacionArray ExpArray TkObject ExpArray
+    | ShiftArray TkObject ExpArray
+    | IndexacionArray ExpArray ExpArit
+    | IdArray TkObject
     deriving Show
 
 --------------------------------- INSTRUCCIONES -------------------------------
