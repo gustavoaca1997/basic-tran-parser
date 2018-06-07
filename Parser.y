@@ -113,12 +113,12 @@ ExpArit : ExpArit '+' ExpArit     { Suma $1 $2 $3 }
         | Id                      { IdArit $1 }
         | Num                     { LitArit $1 }
 
-ExpRel : ExpArit '<'  ExpArit     { MenorQue $1 $3 }
-       | ExpArit '>'  ExpArit     { MayorQue $1 $3 }
-       | ExpArit '<=' ExpArit     { MenorIgualQue $1 $3 }
-       | ExpArit '>=' ExpArit     { MayorIgualQue $1 $3 }
-       | ExpArit '='  ExpArit     { Igual $1 $3 }
-       | ExpArit '/=' ExpArit     { Distinto $1 $3 }
+ExpRel : ExpArit '<'  ExpArit     { MenorQue $1 $2 $3 }
+       | ExpArit '>'  ExpArit     { MayorQue $1 $2 $3 }
+       | ExpArit '<=' ExpArit     { MenorIgualQue $1 $2 $3 }
+       | ExpArit '>=' ExpArit     { MayorIgualQue $1 $2 $3 }
+       | ExpArit '='  ExpArit     { Igual $1 $2 $3 }
+       | ExpArit '/=' ExpArit     { Distinto $1 $2 $3 }
 
 -- Expresiones Booleanas
 ExpBool : ExpRel                            { Relacion $1 }   
@@ -200,12 +200,12 @@ data ExpArit =
     deriving Show
 
 data ExpRel =
-    MenorQue ExpArit ExpArit
-    | MayorQue ExpArit ExpArit
-    | MenorIgualQue ExpArit ExpArit
-    | MayorIgualQue ExpArit ExpArit
-    | Igual ExpArit ExpArit
-    | Distinto ExpArit ExpArit
+    MenorQue ExpArit TkObject ExpArit
+    | MayorQue ExpArit TkObject ExpArit
+    | MenorIgualQue ExpArit TkObject ExpArit
+    | MayorIgualQue ExpArit TkObject ExpArit
+    | Igual ExpArit TkObject ExpArit
+    | Distinto ExpArit TkObject ExpArit
     deriving Show
 
 data ExpBool =
