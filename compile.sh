@@ -6,6 +6,6 @@ case $(whoami) in
         stack ghc -- Lex.hs Parser.hs Main.hs -o basictrans
         ;;
     *)
-        ghc -- Lex.hs Parser.hs Main.hs -o basictrans
+        ghc Main.hs -o basictrans
         ;;
 esac

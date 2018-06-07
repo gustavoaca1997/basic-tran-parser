@@ -83,7 +83,7 @@ not         { TkObject TkNegacion _ }
 
 
 -- Variable Inicial
-Exp: With Variables                               { $2}
+Exp: Expresion                               { $1 }
 
 With : with                                        { $1 }
 
@@ -104,6 +104,7 @@ Tipo : int  { TipoPrimitivo $1 }
 
 Expresion : ExpArit               { ExpArit $1 }
         | ExpBool                 { ExpBool $1 }
+        | ExpChar                 { ExpChar $1 }
 
 -- Expresion Arimetica
 ExpArit : ExpArit '+' ExpArit     { Suma $1 $2 $3 }
@@ -136,6 +137,15 @@ OperadorLogico :
     | or { $1 }
     | not { $1 }
 
+-- Expresiones con caracteres
+ExpChar : ExpChar '++'          { SiguienteChar $1 $2 }
+        | ExpChar "--"          { AnteriorChar $1 $2 }
+        | '#' ExpChar                   { Ascii $1 $2 }
+        | '(' ExpChar ')'               { $2 }
+        | id                            { IdChar $1 }
+        | caracter                      { LitChar $1 }
+
+
 Menos : '-'                       { $1 }
 Id    : id                        { $1 }
 Num   : num                       { $1 }
@@ -152,7 +162,8 @@ Instruccion : {- lambda -}                                { EmptyInstr }
             | Condicional                                 { IfInstr $1 }
             | IterDet                                     { ForInstr $1 }
             | IteracionInd                                { $1 }
-            | IOInstr                                     { IOInstr $1 }
+            | IOInstr                                       { IOInstr $1 }
+            | Asignacion                                  { AsignacionInstr $1 }  
 
 -- Condicionales
 Condicional : If ExpBool '->' Instruccion end                       { If $2 $4 }
@@ -220,6 +231,7 @@ data Variables =
 data Expresion =
     ExpArit ExpArit
     | ExpBool ExpBool
+    | ExpChar ExpChar
     deriving Show
 
 data ExpArit =
@@ -242,11 +254,20 @@ data ExpRel =
     | Distinto ExpArit TkObject ExpArit
     deriving Show
 
+
 data ExpBool =
     Relacion ExpRel -- 2 + n <= x
     | OperacionLogica ExpBool TkObject ExpBool  -- B and (x > 2)
     | IdBool TkObject   -- if es_string
     | LitBool TkObject  -- True, False
+    deriving Show
+
+data ExpChar =
+    SiguienteChar ExpChar TkObject
+    | AnteriorChar ExpChar TkObject
+    | Ascii TkObject ExpChar
+    | IdChar TkObject
+    | LitChar TkObject
     deriving Show
 
 --------------------------------- INSTRUCCIONES -------------------------------
@@ -256,7 +277,7 @@ data Instruccion =
     | ForInstr ForInstr
     | WhileInstr ExpBool Instruccion
     | IOInstr IOInstr
-    -- | Asignacion (ver arriba en inicializacion)
+    | AsignacionInstr Inicializacion
     | EmptyInstr
     deriving Show
 
