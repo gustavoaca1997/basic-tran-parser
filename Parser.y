@@ -174,6 +174,7 @@ Instruccion : {- lambda -}                                { EmptyInstr }
             | Asignacion                                  { AsignacionInstr $1 }
             | IOInstr                                     { IOInstr $1 }
             | IncAlcance                                  { IncAlcanceInstr $1 }
+            | Instruccion Instruccion                     { Secuenciacion $1 $2 }
 
 -- Condicionales
 Condicional : If ExpBool '->' Instruccion end                       { If $2 $4 }
@@ -303,6 +304,7 @@ data Instruccion =
     | IOInstr IOInstr
     | AsignacionInstr Inicializacion
     | IncAlcanceInstr IncAlcanceInstr
+    | Secuenciacion Instruccion Instruccion
     -- | Asignacion (ver arriba en inicializacion)
     | EmptyInstr
     deriving Show
