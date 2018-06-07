@@ -79,7 +79,8 @@ Exp: With Variables                                { Exp $1 $2 }
 With : with                                        { $1 }
 
 -- Declaracion de las variables
-Variables : Var Identificadores ':' Tipo           { Variables (reverse $2) $4 }
+Variables : Var Identificadores ':' Tipo               { [Variables (reverse $2) $4] }
+    | Var Identificadores ':' Tipo Variables           { (Variables (reverse $2) $4) : $5 }
 
 Var : var   { $1 }
 
@@ -115,7 +116,7 @@ parseError _ = error "Parse error"
 -- Tipos de datos a retornar
 -- Variable inicial
 data Exp
-    = Exp TkObject Variables
+    = Exp TkObject [Variables]
     deriving Show
 
 -- Para la declariacion o inicializacion de una variable
