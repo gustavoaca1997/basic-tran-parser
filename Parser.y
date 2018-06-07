@@ -174,6 +174,7 @@ Instruccion : {- lambda -}                                { EmptyInstr }
             | Asignacion                                  { AsignacionInstr $1 }
             | IOInstr                                     { IOInstr $1 }
             | IncAlcance                                  { IncAlcanceInstr $1 }
+            | PuntoInstr                                  { PuntoInstr $1 }
             | Instruccion Instruccion                     { Secuenciacion $1 $2 }
 
 -- Condicionales
@@ -200,6 +201,11 @@ IteracionInd : While ExpBool '->' Instruccion end            { WhileInstr $2 $4 
 -- Alcance
 IncAlcance : With Variables begin Instruccion end            { ConDeclaracion $1 $2 $4 }
            | Begin Instruccion end                           { SinDeclaracion $1 $2 }
+
+-- Instruccion Punto
+PuntoInstr : id '.' Num                                      { Punto $1 $2 $3  }
+           | id '.' id                                       { Punto $1 $2 $3  }
+           | id '.' ExpArit                                  { PuntoExp $1 $2 $3  }
 
 Begin : begin   { $1 }
 While : while   { $1 }
@@ -305,6 +311,7 @@ data Instruccion =
     | AsignacionInstr Inicializacion
     | IncAlcanceInstr IncAlcanceInstr
     | Secuenciacion Instruccion Instruccion
+    | PuntoInstr PuntoInstr
     -- | Asignacion (ver arriba en inicializacion)
     | EmptyInstr
     deriving Show
@@ -338,5 +345,16 @@ data IOInstr =
 data IncAlcanceInstr =
     ConDeclaracion TkObject [Variables] Instruccion
     | SinDeclaracion TkObject Instruccion
+    deriving Show
+
+data PuntoInstr =
+    Punto
+        TkObject -- Solo id
+        TkObject -- . position
+        TkObject -- id o num
+    | PuntoExp
+        TkObject -- Solo id
+        TkObject -- . position
+        ExpArit  -- Expresion aritmetica
     deriving Show
 }
