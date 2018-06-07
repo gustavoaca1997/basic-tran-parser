@@ -1,9 +1,9 @@
 {
-module Parser where
+module Main where
 import Lex
 }
 
-%name calc
+%name parser
 %tokentype { TkObject }
 %error { parseError }
 
@@ -34,7 +34,7 @@ array       { TkObject TkArray _ }
 -- Literales
 caracter    { TkObject (TkCaracter $$) _ }
 true        { TkObject TkTrue _ }
-id          { TkObject (TkId $$) _ }
+id          { TkObject (TkId _) _ }
 false       { TkObject TkFalse _ }
 num         { TkObject (TkNum $$) _ }
 
@@ -71,21 +71,23 @@ not         { TkObject TkNegacion _ }
 '::'        { TkObject TkConcatenacion _ }
 '$'         { TkObject TkShift _ }
 
+-- Grammar
+-- var no puede aparecer de primero
 %%
-
-Exp : var   { Exp $1 }
-
-
+Exp: With Variables              { Exp $1 $2 }
+With : with                             { $1 }
+Variables : var Identificadores          { reverse $2 }
+Identificadores : Identificadores ',' id     { $3:$1 }
+                | id                     { [$1] }
 {
 
 parseError :: [TkObject] -> a
 parseError _ = error "Parse error"
 
 data Exp
-    = Exp TkObject
+    = Exp TkObject [TkObject]
     deriving Show
 
-main = do
-    putStr "asd"
+main = getContents >>= print . parser . scanTokens
 
 }
