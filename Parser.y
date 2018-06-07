@@ -83,7 +83,7 @@ not         { TkObject TkNegacion _ }
 
 
 -- Variable Inicial
-Exp: Instruccion                                { $1 }
+Exp: With Variables                               { $2}
 
 With : with                                        { $1 }
 
@@ -144,8 +144,9 @@ Identificadores : Identificadores ',' Inicializacion        { $3:$1 }
 
 -- (identificador, literal o identificador)
 Inicializacion : id                                       { Declaracion $1 }
-                | id '<-' Literal                         { Asignacion $1 (LitArit $3) }
-                | id '<-' ExpArit                          { Asignacion $1 $3 }
+                | id '<-' Literal                         { Asignacion $1 (ExpArit (LitArit $3)) }
+                | id '<-' ExpArit                          { Asignacion $1 (ExpArit $3) }
+                | id '<-' ExpBool                          { Asignacion $1 (ExpBool $3) }
 
 --------------------------------- INSTRUCCIONES -------------------------------
 Instruccion : {- lambda -}                                { EmptyInstr }
@@ -194,7 +195,7 @@ data Exp
 
 -- Para la declariacion o inicializacion de una variable
 data Inicializacion
-    = Asignacion TkObject ExpArit -- id <- n, id <- 2 + x
+    = Asignacion TkObject Expresion -- id <- n, id <- 2 + x
     | Declaracion TkObject              -- id
     deriving Show
 
