@@ -163,7 +163,6 @@ For : for       { $1 }
 -- Iteración Indeterminada
 IteracionInd : While ExpBool '->' Instruccion end            { WhileInstr $2 $4 }
 
-If : if         { $1 }
 While : while   { $1 }
 -- Literales
 Literal : caracter { $1 }
