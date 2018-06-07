@@ -144,10 +144,7 @@ Identificadores : Identificadores ',' Inicializacion        { $3:$1 }
 
 -- (identificador, literal o identificador)
 Inicializacion : id                                       { Declaracion $1 }
-                | id '<-' Literal                         { Asignacion $1 (ExpArit (LitArit $3)) }
-                | id '<-' ExpArit                          { Asignacion $1 (ExpArit $3) }
-                | id '<-' ExpBool                          { Asignacion $1 (ExpBool $3) }
-
+                | Asignacion                              { $1 }
 --------------------------------- INSTRUCCIONES -------------------------------
 Instruccion : {- lambda -}                                { EmptyInstr }
             | Condicional                                 { IfInstr $1 }
@@ -166,6 +163,12 @@ IterDet : For Id from ExpArit to ExpArit '->' Instruccion end              { For
 -- Instrucciones I/O
 IOInstr : Print Expresion           { Print $1 $2 }
         | Read  Id                  { Read $1 $2 }
+
+-- Asignacion
+Asignacion : 
+    id '<-' Literal                         { Asignacion $1 (ExpArit (LitArit $3)) }
+    | id '<-' ExpArit                          { Asignacion $1 (ExpArit $3) }
+    | id '<-' ExpBool                          { Asignacion $1 (ExpBool $3) }
 
 Print : print   { $1 }
 Read : read   { $1 }
@@ -250,6 +253,7 @@ data Instruccion =
     | ForInstr ForInstr
     | WhileInstr ExpBool Instruccion
     | IOInstr IOInstr
+    -- | Asignacion (ver arriba en inicializacion)
     | EmptyInstr
     deriving Show
 
