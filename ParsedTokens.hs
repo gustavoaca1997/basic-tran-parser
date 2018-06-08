@@ -8,6 +8,8 @@ class ToStr a where
     toStr :: a -> Int -> String
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+printLista tabs xs = concatMap (\x -> toStr x (tabs+2)) xs
+
 -- Tipos de datos a retornar
 -- Variable inicial
 data Programa
@@ -24,7 +26,7 @@ data Inicializacion
     deriving Show
 
 instance ToStr Inicializacion where
-    toStr (Asignacion obj exp) tabs = putTabs tabs "ASIGNACION" ++ 
+    toStr (Asignacion obj exp) tabs = putTabs tabs "ASIGNACION" ++
         putTabs (tabs+2) "IDENTIFICADOR\n" ++ putTabs (tabs+4) (show obj) ++ toStr exp (tabs+2)
     toStr (Declaracion obj) tabs = putTabs tabs "DECLARACION" ++
         putTabs (tabs+2) "IDENTIFICADOR\n" ++ putTabs (tabs+4) (show obj)
@@ -37,7 +39,7 @@ data Tipo =
 
 instance ToStr Tipo where
     toStr (TipoPrimitivo obj) tabs = putTabs tabs "TIPO PRIMITIVO" ++ putTabs (tabs+2) (show obj)
-    toStr (TipoArreglo obj exparit tipo) tabs = putTabs tabs "TIPO ARREGLO" ++ 
+    toStr (TipoArreglo obj exparit tipo) tabs = putTabs tabs "TIPO ARREGLO" ++
         putTabs (tabs+2) "tamaño:" ++ toStr exparit (tabs+2) ++
         putTabs (tabs+2) "tipo de los elementos:" ++ toStr tipo (tabs+2)
 
@@ -47,8 +49,8 @@ data Variables =
     deriving Show
 
 instance ToStr Variables where
-    toStr (Variables xs tipo) tabs = putTabs tabs "DECLARACION/INICIALIZACION DE VARIABLES" ++ 
-        concatMap (\x -> toStr x (tabs+2)) xs ++ 
+    toStr (Variables xs tipo) tabs = putTabs tabs "DECLARACION/INICIALIZACION DE VARIABLES" ++
+        printLista tabs xs ++
         toStr tipo (tabs+2)
 
 -------------------------------- EXPRESIONES ----------------------------------
@@ -66,7 +68,7 @@ instance ToStr Expresion where
     toStr (ExpChar x) tabs = toStr x tabs
     toStr (ExpArray x) tabs = toStr x tabs
 
--- Expresion Aritmética    
+-- Expresion Aritmética
 data ExpArit =
     Suma ExpArit TkObject ExpArit
     | Resta ExpArit TkObject ExpArit
@@ -80,20 +82,24 @@ data ExpArit =
     deriving Show
 
 instance ToStr ExpArit where
-    toStr (Suma exparit1 obj exparit2) tabs = (putTabs tabs "SUMA") ++ (toStr exparit1 (tabs+2)) ++ 
+    toStr (Suma exparit1 obj exparit2) tabs = (putTabs tabs "SUMA") ++ (toStr exparit1 (tabs+2)) ++
         (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
 
-    toStr (Resta exparit1 obj exparit2) tabs = (putTabs tabs "RESTA") ++ (toStr exparit1 (tabs+2)) ++ 
+    toStr (Resta exparit1 obj exparit2) tabs = (putTabs tabs "RESTA") ++ (toStr exparit1 (tabs+2)) ++
         (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
 
-    toStr (Mult exparit1 obj exparit2) tabs = (putTabs tabs "MULTIPLICACIÓN") ++ (toStr exparit1 (tabs+2)) ++ 
+    toStr (Mult exparit1 obj exparit2) tabs = (putTabs tabs "MULTIPLICACIÓN") ++ (toStr exparit1 (tabs+2)) ++
         (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
 
-    toStr (Div exparit1 obj exparit2) tabs = (putTabs tabs "DIVISIÓN") ++ (toStr exparit1 (tabs+2)) ++ 
+    toStr (Div exparit1 obj exparit2) tabs = (putTabs tabs "DIVISIÓN") ++ (toStr exparit1 (tabs+2)) ++
         (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
 
-    toStr (Mod exparit1 obj exparit2) tabs = (putTabs tabs "MODULO") ++ (toStr exparit1 (tabs+2)) ++ 
+    toStr (Mod exparit1 obj exparit2) tabs = (putTabs tabs "MODULO") ++ (toStr exparit1 (tabs+2)) ++
         (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
+
+    toStr (Ascii obj expchar) tabs = putTabs tabs "ASCII" ++
+        putTabs (tabs+2) (show obj) ++
+        toStr expchar (tabs+2)
 
     toStr (MenosUnario obj exparit) tabs = (putTabs tabs "MENOS UNARIO") ++ (putTabs (tabs+2) (show obj)) ++ (toStr exparit (tabs+2))
 
@@ -112,22 +118,22 @@ data ExpRel =
     deriving Show
 
 instance ToStr ExpRel where
-    toStr (MenorQue exparit1 obj exparit2) tabs = (putTabs tabs "MENOR_QUE") ++ (toStr exparit1 (tabs+2)) ++ 
+    toStr (MenorQue exparit1 obj exparit2) tabs = (putTabs tabs "MENOR_QUE") ++ (toStr exparit1 (tabs+2)) ++
         (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
 
     toStr (MayorQue exparit1 obj exparit2) tabs = (putTabs tabs "MAYOR_QUE") ++ (toStr exparit1 (tabs+2)) ++
         (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
 
-    toStr (MenorIgualQue exparit1 obj exparit2) tabs = (putTabs tabs "MENOR_IG_QUE") ++ (toStr exparit1 (tabs+2)) ++ 
+    toStr (MenorIgualQue exparit1 obj exparit2) tabs = (putTabs tabs "MENOR_IG_QUE") ++ (toStr exparit1 (tabs+2)) ++
         (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
 
-    toStr (MayorIgualQue exparit1 obj exparit2) tabs = (putTabs tabs "MAYOR_IG_QUE") ++ (toStr exparit1 (tabs+2)) ++ 
+    toStr (MayorIgualQue exparit1 obj exparit2) tabs = (putTabs tabs "MAYOR_IG_QUE") ++ (toStr exparit1 (tabs+2)) ++
         (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
 
-    toStr (Igual exparit1 obj exparit2) tabs = (putTabs tabs "IGUAL") ++ (toStr exparit1 (tabs+2)) ++ 
+    toStr (Igual exparit1 obj exparit2) tabs = (putTabs tabs "IGUAL") ++ (toStr exparit1 (tabs+2)) ++
         (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
 
-    toStr (Distinto exparit1 obj exparit2) tabs = (putTabs tabs "DISTINTO") ++ (toStr exparit1 (tabs+2)) ++ 
+    toStr (Distinto exparit1 obj exparit2) tabs = (putTabs tabs "DISTINTO") ++ (toStr exparit1 (tabs+2)) ++
         (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
 
 -- Expresión Booleana/Lógica
@@ -142,10 +148,10 @@ data ExpBool =
 instance ToStr ExpBool where
     toStr (Relacion exprel) tabs = putTabs tabs "RELACION" ++ toStr exprel (tabs+2)
 
-    toStr (OperadorBoolBin expbool1 obj expbool2) tabs = putTabs tabs "OPERADOR_BOOL_BIN" ++ 
+    toStr (OperadorBoolBin expbool1 obj expbool2) tabs = putTabs tabs "OPERADOR_BOOL_BIN" ++
         toStr expbool1 (tabs+2) ++ (putTabs (tabs+2) (show obj)) ++ toStr expbool2 (tabs+2)
 
-    toStr (OperadorBoolUn obj expbool) tabs = putTabs tabs "OPERADOR_BOOL_UN" ++ 
+    toStr (OperadorBoolUn obj expbool) tabs = putTabs tabs "OPERADOR_BOOL_UN" ++
         (putTabs (tabs+2) (show obj)) ++ toStr expbool (tabs+2)
 
     toStr (IdBool obj) tabs = putTabs tabs "IDENTIFICADOR" ++ (putTabs (tabs+2) (show obj))
@@ -161,17 +167,13 @@ data ExpChar =
     deriving Show
 
 instance ToStr ExpChar where
-    toStr (SiguienteChar expchar obj) tabs = putTabs tabs "SIG_CHAR" ++ 
+    toStr (SiguienteChar expchar obj) tabs = putTabs tabs "SIG_CHAR" ++
         toStr expchar (tabs+2) ++
         putTabs (tabs+2) (show obj)
 
-    toStr (AnteriorChar expchar obj) tabs = putTabs tabs "ANT_CHAR" ++ 
+    toStr (AnteriorChar expchar obj) tabs = putTabs tabs "ANT_CHAR" ++
         toStr expchar (tabs+2) ++
         putTabs (tabs+2) (show obj)
-
-    toStr (Ascii obj expchar) tabs = putTabs tabs "ASCII" ++
-        putTabs (tabs+2) (show obj) ++
-        toStr expchar (tabs+2)
 
     toStr (IdChar obj) tabs = putTabs tabs "IDENTIFICADOR" ++ (putTabs (tabs+2) (show obj))
 
@@ -187,7 +189,7 @@ data ExpArray =
 
 instance ToStr ExpArray where
     toStr (ConcatenacionArray exparray1 obj exparray2) tabs =
-        putTabs tabs "CONCAT_ARR" ++ 
+        putTabs tabs "CONCAT_ARR" ++
         toStr exparray1 (tabs+2) ++
         putTabs (tabs+2) (show obj) ++
         toStr exparray2 (tabs+2)
@@ -224,15 +226,13 @@ instance ToStr Instruccion where
 
     toStr (ForInstr x) tabs = putTabs tabs "" ++ show x
 
-    toStr (WhileInstr x y) tabs = putTabs tabs "" ++ show x ++ toStr y (tabs+2)
+    toStr (WhileInstr x y) tabs = putTabs tabs "" ++ show x ++ printLista tabs y
 
     toStr (IOInstr x) tabs = putTabs tabs "" ++ show x
 
     toStr (AsignacionInstr x) tabs = toStr x tabs
 
     toStr (IncAlcanceInstr x) tabs = toStr x tabs
-    
-    toStr (Secuenciacion x y) tabs = putTabs tabs "SECUENCIACIÓN" ++ toStr x (tabs+2) ++ toStr y (tabs+2)
 
     toStr (PuntoInstr x) tabs = putTabs tabs "" ++ show x
 
@@ -245,14 +245,14 @@ data IfInstr =
     deriving Show
 
 instance ToStr IfInstr where
-    toStr (If expbool instruccion) tabs = putTabs tabs "CONDICIONAL" ++ 
+    toStr (If expbool instruccion) tabs = putTabs tabs "CONDICIONAL" ++
         putTabs (tabs+2) "guardia:" ++ toStr expbool (tabs+2) ++
-        putTabs (tabs+2) "exito:" ++ toStr instruccion (tabs+2)
+        putTabs (tabs+2) "exito:" ++ printLista tabs instruccion
 
-    toStr (IfOtherwise expbool instruccion1 instruccion2) tabs = putTabs tabs "CONDICIONAL" ++ 
-        putTabs (tabs+2) "guardia:" ++ toStr expbool (tabs+2) ++ 
-        putTabs (tabs+2) "exito:" ++ toStr instruccion1 (tabs+2) ++ 
-        putTabs (tabs+2) "fracaso:" ++ toStr instruccion2 (tabs+2)
+    toStr (IfOtherwise expbool instruccion1 instruccion2) tabs = putTabs tabs "CONDICIONAL" ++
+        putTabs (tabs+2) "guardia:" ++ toStr expbool (tabs+2) ++
+        putTabs (tabs+2) "exito:" ++ printLista tabs instruccion1 ++
+        putTabs (tabs+2) "fracaso:" ++ printLista tabs instruccion2
 
 -- Instrucción de For
 data ForInstr =
@@ -284,12 +284,12 @@ data IncAlcanceInstr =
     deriving Show
 
 instance ToStr IncAlcanceInstr where
-    toStr (ConDeclaracion _ ys instruccion) tabs = putTabs tabs "INC_ALCANCE" ++ 
-        concatMap (\y -> toStr y (tabs+2)) ys ++ 
-        toStr instruccion (tabs+2)
+    toStr (ConDeclaracion _ ys instruccion) tabs = putTabs tabs "INC_ALCANCE" ++
+        printLista tabs ys ++
+        printLista tabs instruccion
 
-    toStr (SinDeclaracion _ instruccion) tabs = putTabs tabs "INC_ALCANCE" ++ 
-        toStr instruccion (tabs+2)
+    toStr (SinDeclaracion _ instruccion) tabs = putTabs tabs "INC_ALCANCE" ++
+        printLista tabs instruccion
 
 -- Instrucción de Punto
 data PuntoInstr =
