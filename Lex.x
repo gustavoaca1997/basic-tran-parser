@@ -14,79 +14,79 @@ tokens :-
   -- spaces
   $white+       ;
   -- Palabras reservadas
-  with              {\ap s -> TkObject TkWith ap}
-  end               {\ap s -> TkObject TkEnd ap}
-  var               {\ap s -> TkObject TkVar ap}
-  while             {\ap s -> TkObject TkWhile ap}
-  for               {\ap s -> TkObject TkFor ap}
-  from              {\ap s -> TkObject TkFrom ap}
-  to                {\ap s -> TkObject TkTo ap}
-  step              {\ap s -> TkObject TkStep ap}
-  begin             {\ap s -> TkObject TkBegin ap}
-  read              {\ap s -> TkObject TkRead ap}
-  print             {\ap s -> TkObject TkPrint ap}
-  from              {\ap s -> TkObject TkFrom ap}
-  to                {\ap s -> TkObject TkTo ap}
-  step              {\ap s -> TkObject TkStep ap}
-  of                {\ap s -> TkObject TkOf ap}
-  if                {\ap s -> TkObject TkIf ap}
-  otherwise                {\ap s -> TkObject TkOtherwise ap}
+  with              {\ap s -> TkObject TkWith s ap}
+  end               {\ap s -> TkObject TkEnd s ap}
+  var               {\ap s -> TkObject TkVar s ap}
+  while             {\ap s -> TkObject TkWhile s ap}
+  for               {\ap s -> TkObject TkFor s ap}
+  from              {\ap s -> TkObject TkFrom s ap}
+  to                {\ap s -> TkObject TkTo s ap}
+  step              {\ap s -> TkObject TkStep s ap}
+  begin             {\ap s -> TkObject TkBegin s ap}
+  read              {\ap s -> TkObject TkRead s ap}
+  print             {\ap s -> TkObject TkPrint s ap}
+  from              {\ap s -> TkObject TkFrom s ap}
+  to                {\ap s -> TkObject TkTo s ap}
+  step              {\ap s -> TkObject TkStep s ap}
+  of                {\ap s -> TkObject TkOf s ap}
+  if                {\ap s -> TkObject TkIf s ap}
+  otherwise                {\ap s -> TkObject TkOtherwise s ap}
 
   -- Tipos
-  bool              {\ap s -> TkObject TkBool ap}
-  int               {\ap s -> TkObject TkInt ap}
-  char              {\ap s -> TkObject TkChar ap}
-  array             {\ap s -> TkObject TkArray ap}
+  bool              {\ap s -> TkObject TkBool s ap}
+  int               {\ap s -> TkObject TkInt s ap}
+  char              {\ap s -> TkObject TkChar s ap}
+  array             {\ap s -> TkObject TkArray s ap}
 
   -- numbers
-  $numeros+            {\ap s -> TkObject (TkNum s) ap}
+  $numeros+            {\ap s -> TkObject (TkNum s) s ap}
 
   -- caracteres
-  '($characters)'               {\ap s -> TkObject (TkCaracter s) ap}
-  '\\[\\nt\']'      {\ap s -> TkObject (TkCaracter s) ap}
+  '($characters)'               {\ap s -> TkObject (TkCaracter s) s ap}
+  '\\[\\nt\']'      {\ap s -> TkObject (TkCaracter s) s ap}
 
   -- Booleans
-  true              {\ap s -> TkObject TkTrue ap}
-  false             {\ap s -> TkObject TkFalse ap}
+  true              {\ap s -> TkObject TkTrue s ap}
+  false             {\ap s -> TkObject TkFalse s ap}
 
   -- separadores
-  \,                 {\ap s -> TkObject TkComa ap}
-  \.                {\ap s -> TkObject TkPunto ap}
-  \;                {\ap s -> TkObject TkPuntoYComa ap}
-  ::                {\ap s -> TkObject TkConcatenacion ap}
-  :                 {\ap s -> TkObject TkDosPuntos ap}
-  \(                {\ap s -> TkObject TkParAbre ap}
-  \)                {\ap s -> TkObject TkParCierra ap}
-  \[                {\ap s -> TkObject TkCorcheteAbre ap}
-  \]                {\ap s -> TkObject TkCorcheteCierra ap}
-  \-\>               {\ap s -> TkObject TkHacer ap}
-  \<\-               {\ap s -> TkObject TkAsignacion ap}
+  \,                 {\ap s -> TkObject TkComa s ap}
+  \.                {\ap s -> TkObject TkPunto s ap}
+  \;                {\ap s -> TkObject TkPuntoYComa s ap}
+  ::                {\ap s -> TkObject TkConcatenacion s ap}
+  :                 {\ap s -> TkObject TkDosPuntos s ap}
+  \(                {\ap s -> TkObject TkParAbre s ap}
+  \)                {\ap s -> TkObject TkParCierra s ap}
+  \[                {\ap s -> TkObject TkCorcheteAbre s ap}
+  \]                {\ap s -> TkObject TkCorcheteCierra s ap}
+  \-\>               {\ap s -> TkObject TkHacer s ap}
+  \<\-               {\ap s -> TkObject TkAsignacion s ap}
 
   -- Operadores
-  \+\+              {\ap s -> TkObject TkSiguienteCar ap}
-  \+                {\ap s -> TkObject TkSuma ap}
-  \-\-              {\ap s -> TkObject TkAnteriorCar ap}
-  \-                {\ap s -> TkObject TkResta ap}
-  \*                {\ap s -> TkObject TkMult ap}
-  \/                 {\ap s -> TkObject TkDiv ap}
-  \%                 {\ap s -> TkObject TkMod ap}
-  \/\\               {\ap s -> TkObject TkConjuncion ap}
-  \\\/               {\ap s -> TkObject TkDisyuncion ap}
-  not               {\ap s -> TkObject TkNegacion ap}
-  \/=                {\ap s -> TkObject TkDesigual ap}
-  \<                {\ap s -> TkObject TkMenor ap}
-  \<=                {\ap s -> TkObject TkMenorIgual ap}
-  \>                {\ap s -> TkObject TkMayor ap}
-  \>=                {\ap s -> TkObject TkMayorIgual ap}
-  =                 {\ap s -> TkObject TkIgual ap}
-  \#                 {\ap s -> TkObject TkValorAscii ap}
-  \$                {\ap s -> TkObject TkShift ap}
+  \+\+              {\ap s -> TkObject TkSiguienteCar s ap}
+  \+                {\ap s -> TkObject TkSuma s ap}
+  \-\-              {\ap s -> TkObject TkAnteriorCar s ap}
+  \-                {\ap s -> TkObject TkResta s ap}
+  \*                {\ap s -> TkObject TkMult s ap}
+  \/                 {\ap s -> TkObject TkDiv s ap}
+  \%                 {\ap s -> TkObject TkMod s ap}
+  \/\\               {\ap s -> TkObject TkConjuncion s ap}
+  \\\/               {\ap s -> TkObject TkDisyuncion s ap}
+  not               {\ap s -> TkObject TkNegacion s ap}
+  \/=                {\ap s -> TkObject TkDesigual s ap}
+  \<                {\ap s -> TkObject TkMenor s ap}
+  \<=                {\ap s -> TkObject TkMenorIgual s ap}
+  \>                {\ap s -> TkObject TkMayor s ap}
+  \>=                {\ap s -> TkObject TkMayorIgual s ap}
+  =                 {\ap s -> TkObject TkIgual s ap}
+  \#                 {\ap s -> TkObject TkValorAscii s ap}
+  \$                {\ap s -> TkObject TkShift s ap}
 
   -- id
-  $letras($alphanum*)   {\ap s -> TkObject (TkId s) ap}
+  $letras($alphanum*)   {\ap s -> TkObject (TkId s) s ap}
 
   -- Cualquier cosa
-  .                 {\ap s -> TkObject (TkErr (head s)) ap}
+  .                 {\ap s -> TkObject (TkErr (head s)) s ap}
 {
 -- Codigo
 
@@ -160,18 +160,12 @@ data Token =
 
 
 -- par (Token, AlexPosn)
-data TkObject = TkObject Token AlexPosn deriving (Eq)
+data TkObject = TkObject Token String AlexPosn deriving (Eq)
 instance Show TkObject where
-  -- Ejm: TkNum(30) 3 2
-  show (TkObject (TkNum num) (AlexPn _ l c)) = "TkNum(" ++ num ++ ") " ++ show l ++ " " ++ show c
-  -- Ejm: TkId('beta') 3 2
-  show (TkObject (TkId i) (AlexPn _ l c)) = "TkId(" ++ show i ++ ") " ++ show l ++ " " ++ show c
   -- Ejm: Error: Caracter inesperado '?' en la fila 3 2
-  show (TkObject (TkErr tk) (AlexPn _ l c)) = "Error: Caracter inesperado " ++ ['"', tk, '"'] ++ " en la fila " ++ show l ++ ", columna " ++ show c
-  -- Ejm: TkCaracter('p') 2 3
-  show (TkObject (TkCaracter s) (AlexPn _ l c)) = "TkCaracter(" ++ s ++ ") " ++ show l ++ " " ++ show c
+  show (TkObject (TkErr tk) _ (AlexPn _ l c)) = "Error: Caracter inesperado " ++ ['"', tk, '"'] ++ " en la fila " ++ show l ++ ", columna " ++ show c
   -- Ejm: TkWhile 3 2
-  show (TkObject tk (AlexPn _ l c)) = show tk ++ " " ++ show l ++ " " ++ show c
+  show (TkObject tk s (AlexPn _ l c)) = s ++ " " ++ show l ++ " " ++ show c
 
 ------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------
@@ -181,8 +175,8 @@ instance Show TkObject where
 group :: [TkObject] -> [[TkObject]]
 group [] = []
 --group [a] = [[a]]
-group ent@((TkObject _ (AlexPn _ a _)):_) = equalA:(group rest)
-  where equalA = takeWhile (\(TkObject _ (AlexPn _ a' _)) -> a' == a) ent
+group ent@((TkObject _ _ (AlexPn _ a _)):_) = equalA:(group rest)
+  where equalA = takeWhile (\(TkObject _ _ (AlexPn _ a' _)) -> a' == a) ent
         rest = drop (length equalA) ent
 
 formatln' :: [TkObject] -> String
@@ -199,7 +193,7 @@ print_errors :: [TkObject] -> IO()
 print_errors = putStr . formatln . map (\a -> [a])
 
 isError :: TkObject -> Bool
-isError (TkObject (TkErr _) _) = True
+isError (TkObject (TkErr _) _ _) = True
 isError _ = False
 
 scanTokens :: String -> [TkObject]

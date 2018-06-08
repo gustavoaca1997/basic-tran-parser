@@ -13,66 +13,66 @@ import ParsedTokens
 %token
 
 -- Reservadas
-with        { TkObject TkWith _ }
-end         { TkObject TkEnd _  }
-var         { TkObject TkVar _  }
-while       { TkObject TkWhile _ }
-for         { TkObject TkFor _ }
-from        { TkObject TkFrom _ }
-to          { TkObject TkTo _ }
-step        { TkObject TkStep _ }
-if          { TkObject TkIf _ }
-otherwise   { TkObject TkOtherwise _ }
-of          { TkObject TkOf _ }
-begin       { TkObject TkBegin _ }
-print       { TkObject TkPrint _ }
-read        { TkObject TkRead _ }
+with        { TkObject TkWith _ _ }
+end         { TkObject TkEnd _ _ }
+var         { TkObject TkVar _ _ }
+while       { TkObject TkWhile _ _ }
+for         { TkObject TkFor _ _ }
+from        { TkObject TkFrom _ _ }
+to          { TkObject TkTo _ _ }
+step        { TkObject TkStep _ _ }
+if          { TkObject TkIf _ _ }
+otherwise   { TkObject TkOtherwise _ _ }
+of          { TkObject TkOf _ _ }
+begin       { TkObject TkBegin _ _ }
+print       { TkObject TkPrint _ _ }
+read        { TkObject TkRead _ _ }
 
 -- Tipos
-int         { TkObject TkInt _ }
-bool        { TkObject TkBool _ }
-char        { TkObject TkChar _ }
-array       { TkObject TkArray _ }
+int         { TkObject TkInt _ _ }
+bool        { TkObject TkBool _ _ }
+char        { TkObject TkChar _ _ }
+array       { TkObject TkArray _ _ }
 
 -- Literales
-caracter    { TkObject (TkCaracter _) _ }
-true        { TkObject TkTrue _ }
-id          { TkObject (TkId _) _ }
-false       { TkObject TkFalse _ }
-num         { TkObject (TkNum _) _ }
+caracter    { TkObject (TkCaracter _) _ _ }
+true        { TkObject TkTrue _ _ }
+id          { TkObject (TkId _) _ _ }
+false       { TkObject TkFalse _ _ }
+num         { TkObject (TkNum _) _ _ }
 
 -- Separadores
-','         { TkObject TkComa _ }
-'.'         { TkObject TkPunto _ }
-';'         { TkObject TkPuntoYComa _ }
-':'         { TkObject TkDosPuntos _ }
-'('         { TkObject TkParAbre _ }
-')'         { TkObject TkParCierra _ }
-'['         { TkObject TkCorcheteAbre _ }
-']'         { TkObject TkCorcheteCierra _ }
-'->'        { TkObject TkHacer _ }
-'<-'        { TkObject TkAsignacion _ }
+','         { TkObject TkComa _ _ }
+'.'         { TkObject TkPunto _ _ }
+';'         { TkObject TkPuntoYComa _ _ }
+':'         { TkObject TkDosPuntos _ _ }
+'('         { TkObject TkParAbre _ _ }
+')'         { TkObject TkParCierra _ _ }
+'['         { TkObject TkCorcheteAbre _ _ }
+']'         { TkObject TkCorcheteCierra _ _ }
+'->'        { TkObject TkHacer _ _ }
+'<-'        { TkObject TkAsignacion _ _ }
 
 -- Operadores
-'+'         { TkObject TkSuma _ }
-'-'         { TkObject TkResta _ }
-'*'         { TkObject TkMult _ }
-'/'         { TkObject TkDiv _ }
-'%'         { TkObject TkMod _ }
-and         { TkObject TkConjuncion _ }
-or          { TkObject TkDisyuncion _ }
-not         { TkObject TkNegacion _ }
-'/='        { TkObject TkDesigual _ }
-'<'         { TkObject TkMenor _ }
-'<='        { TkObject TkMenorIgual _ }
-'>'         { TkObject TkMayor _ }
-'>='        { TkObject TkMayorIgual _ }
-'='         { TkObject TkIgual _ }
-'++'        { TkObject TkSiguienteCar _ }
-"--"        { TkObject TkAnteriorCar _ }
-'#'         { TkObject TkValorAscii _ }
-'::'        { TkObject TkConcatenacion _ }
-'$'         { TkObject TkShift _ }
+'+'         { TkObject TkSuma _ _ }
+'-'         { TkObject TkResta _ _ }
+'*'         { TkObject TkMult _ _ }
+'/'         { TkObject TkDiv _ _ }
+'%'         { TkObject TkMod _ _ }
+and         { TkObject TkConjuncion _ _ }
+or          { TkObject TkDisyuncion _ _ }
+not         { TkObject TkNegacion _ _ }
+'/='        { TkObject TkDesigual _ _ }
+'<'         { TkObject TkMenor _ _ }
+'<='        { TkObject TkMenorIgual _ _ }
+'>'         { TkObject TkMayor _ _ }
+'>='        { TkObject TkMayorIgual _ _ }
+'='         { TkObject TkIgual _ _ }
+'++'        { TkObject TkSiguienteCar _ _ }
+"--"        { TkObject TkAnteriorCar _ _ }
+'#'         { TkObject TkValorAscii _ _ }
+'::'        { TkObject TkConcatenacion _ _ }
+'$'         { TkObject TkShift _ _ }
 
 -- Precedencias
 %nonassoc '>' '<' '=' '>=' '<=' '/='
@@ -215,5 +215,5 @@ For : for       { $1 }
 {
 
 parseError :: [TkObject] -> Parsed a
-parseError = \line -> fail (show (line!!0) ++ ": parse error")
+parseError = \line -> fail (show (line) ++ ": parse error")
 }

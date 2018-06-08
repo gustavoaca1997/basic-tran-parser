@@ -322,7 +322,7 @@ data PuntoInstr =
     deriving Show
 
 instance ToStr PuntoInstr where
-    toStr (Punto (TkObject (TkId id) _) _ expresion) tabs = putTabs tabs "INSTR_PUNTO" ++
+    toStr (Punto (TkObject (TkId id) _ _) _ expresion) tabs = putTabs tabs "INSTR_PUNTO" ++
         putTabs (tabs+2) "variable:" ++ id ++
         putTabs (tabs+2) "expresion:" ++ toStr expresion (tabs+2)
 
