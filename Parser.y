@@ -72,12 +72,13 @@ not         { TkObject TkNegacion _ }
 '$'         { TkObject TkShift _ }
 
 -- Precedencias
+%nonassoc '>' '<' '=' '>=' '<=' '/='
 %left '+' '-'
 %left '*' '/' '%'
-%left NEG
-%nonassoc '>' '<' '=' '>=' '<=' '/='
-%left and or
+%left or
+%left and
 %left not
+%left NEG
 -- Grammar
 %%
 
@@ -127,16 +128,17 @@ ExpRel : ExpArit '<'  ExpArit     { MenorQue $1 $2 $3 }
 
 -- Expresiones Booleanas
 ExpBool : ExpRel                            { Relacion $1 }
-        | ExpBool OperadorLogico ExpBool    { OperacionLogica $1 $2 $3 }
+        | ExpBool OperadorLogico ExpBool    { OperadorBoolBin $1 $2 $3 }
+        | Not ExpBool  %prec NEG            { OperadorBoolUn $1 $2 }
         | id                                { IdBool $1 }
-        | '(' ExpBool ')'                   { $2 }
         | true                              { LitBool $1 }
         | false                              { LitBool $1 }
+        | '(' ExpBool ')'                   { $2 }
 
 OperadorLogico :
     and { $1 }
     | or { $1 }
-    | not { $1 }
+Not : not { $1 }
 
 -- Expresiones con caracteres
 ExpChar : ExpChar '++'          { SiguienteChar $1 $2 }
@@ -281,7 +283,8 @@ data ExpRel =
 
 data ExpBool =
     Relacion ExpRel -- 2 + n <= x
-    | OperacionLogica ExpBool TkObject ExpBool  -- B and (x > 2)
+    | OperadorBoolBin ExpBool TkObject ExpBool  -- B and (x > 2)
+    | OperadorBoolUn  TkObject ExpBool
     | IdBool TkObject   -- if es_string
     | LitBool TkObject  -- True, False
     deriving Show
