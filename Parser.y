@@ -206,9 +206,7 @@ IncAlcance : With Variables begin Bloque end            { ConDeclaracion $1 $2 $
            | Begin Bloque end                           { SinDeclaracion $1 $2 }
 
 -- Instruccion Punto
-PuntoInstr : id '.' Num                                      { Punto $1 $2 $3  }
-           | id '.' id                                       { Punto $1 $2 $3  }
-           | id '.' ExpArit                                  { PuntoExp $1 $2 $3  }
+PuntoInstr : id '.' ExpArit                                  { Punto $1 $2 $3  }
 
 Begin : begin   { $1 }
 While : while   { $1 }
