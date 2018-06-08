@@ -76,6 +76,7 @@ data ExpArit =
     | MenosUnario TkObject ExpArit
     | LitArit TkObject
     | IdArit  TkObject
+    | Ascii TkObject ExpChar
     deriving Show
 
 instance ToStr ExpArit where
@@ -210,11 +211,10 @@ instance ToStr ExpArray where
 data Instruccion =
     IfInstr IfInstr
     | ForInstr ForInstr
-    | WhileInstr ExpBool Instruccion
+    | WhileInstr ExpBool [Instruccion]
     | IOInstr IOInstr
     | AsignacionInstr Inicializacion
     | IncAlcanceInstr IncAlcanceInstr
-    | Secuenciacion Instruccion Instruccion
     | PuntoInstr PuntoInstr
     -- | Asignacion (ver arriba en inicializacion)
     | EmptyInstr
@@ -241,8 +241,8 @@ instance ToStr Instruccion where
 
 -- Instrucción de If
 data IfInstr =
-    If ExpBool Instruccion
-    | IfOtherwise ExpBool Instruccion Instruccion
+    If ExpBool [Instruccion]
+    | IfOtherwise ExpBool [Instruccion] [Instruccion]
     deriving Show
 
 instance ToStr IfInstr where
@@ -262,14 +262,14 @@ data ForInstr =
         TkObject    -- id
         ExpArit     -- from
         ExpArit     -- to
-        Instruccion -- Instruccion
+        [Instruccion] -- Instruccion
     | ForStep
         TkObject    -- posicion
         TkObject    -- id
         ExpArit     -- from
         ExpArit     -- to
         ExpArit     -- step
-        Instruccion -- Instruccion
+        [Instruccion] -- Instruccion
     deriving Show
 
 -- Instrucción de I/O
@@ -280,8 +280,8 @@ data IOInstr =
 
 -- Instrucción de Alcance
 data IncAlcanceInstr =
-    ConDeclaracion TkObject [Variables] Instruccion
-    | SinDeclaracion TkObject Instruccion
+    ConDeclaracion TkObject [Variables] [Instruccion]
+    | SinDeclaracion TkObject [Instruccion]
     deriving Show
 
 instance ToStr IncAlcanceInstr where

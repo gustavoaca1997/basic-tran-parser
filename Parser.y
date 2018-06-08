@@ -118,9 +118,10 @@ ExpArit : ExpArit '+' ExpArit     { Suma $1 $2 $3 }
         | ExpArit '/' ExpArit     { Div $1 $2 $3 }
         | ExpArit '%' ExpArit     { Mod $1 $2 $3 }
         | Menos ExpArit %prec NEG { MenosUnario $1 $2 }
-        | ParenAbre ExpArit ')'   { $2 }
+        | '(' ExpArit ')'         { $2 }
         | Id                      { IdArit $1 }
         | Num                     { LitArit $1 }
+        | '#' ExpChar             { Ascii $1 $2 }
 
 ExpRel : ExpArit '<'  ExpArit     { MenorQue $1 $2 $3 }
        | ExpArit '>'  ExpArit     { MayorQue $1 $2 $3 }
@@ -131,7 +132,10 @@ ExpRel : ExpArit '<'  ExpArit     { MenorQue $1 $2 $3 }
 
 -- Expresiones Booleanas
 ExpBool : ExpRel                            { Relacion $1 }
-        | ExpBool OperadorLogico ExpBool    { OperadorBoolBin $1 $2 $3 }
+        | ExpBool OperadorLogico ExpRel     { OperadorBoolBin $1 $2 (Relacion $3) }
+        | ExpBool OperadorLogico true       { OperadorBoolBin $1 $2 (LitBool $3) }
+        | ExpBool OperadorLogico false      { OperadorBoolBin $1 $2 (LitBool $3) }
+        | ExpBool OperadorLogico id         { OperadorBoolBin $1 $2 (IdBool $3) }
         | Not ExpBool  %prec NEG            { OperadorBoolUn $1 $2 }
         | id                                { IdBool $1 }
         | true                              { LitBool $1 }
@@ -146,7 +150,6 @@ Not : not { $1 }
 -- Expresiones con caracteres
 ExpChar : ExpChar '++'          { SiguienteChar $1 $2 }
         | ExpChar "--"          { AnteriorChar $1 $2 }
-        | '#' ExpChar                   { Ascii $1 $2 }
         | '(' ExpChar ')'               { $2 }
         | id                            { IdChar $1 }
         | caracter                      { LitChar $1 }
@@ -162,7 +165,6 @@ ExpArray : ExpArray '::' ExpArray       { ConcatenacionArray $1 $2 $3 }
 Menos : '-'                       { $1 }
 Id    : id                        { $1 }
 Num   : num                       { $1 }
-ParenAbre : '('                   { $1 }
 -- Lista de las variables a declarar e inicializar
 Identificadores : Identificadores ',' Inicializacion        { $3:$1 }
                 | Inicializacion                            { [$1] }
@@ -172,23 +174,25 @@ Inicializacion : id                                       { Declaracion $1 }
                 | Asignacion                              { $1 }
 
 --------------------------------- INSTRUCCIONES -------------------------------
-Instruccion : {- lambda -}                                { EmptyInstr }
-            | Condicional                                 { IfInstr $1 }
+Bloque : {- labmda -}                                      { [EmptyInstr] }
+       | Instruccion Bloque                                { $1:$2 }
+       | Instruccion                                       { [$1] }
+
+Instruccion : Condicional                                 { IfInstr $1 }
             | IterDet                                     { ForInstr $1 }
             | IteracionInd                                { $1 }
             | Asignacion ';'                              { AsignacionInstr $1 }
             | IOInstr ';'                                 { IOInstr $1 }
             | IncAlcance                                  { IncAlcanceInstr $1 }
             | PuntoInstr ';'                              { PuntoInstr $1 }
-            | Instruccion Instruccion                     { Secuenciacion $1 $2 }
 
--- Condicionales
-Condicional : If ExpBool '->' Instruccion end                       { If $2 $4 }
-            | If ExpBool '->' Instruccion otherwise '->' Instruccion end { IfOtherwise $2 $4 $7 }
+            -- Condicionales
+Condicional : If ExpBool '->' Bloque end                       { If $2 $4 }
+            | If ExpBool '->' Bloque otherwise Bloque end { IfOtherwise $2 $4 $6 }
 
 -- Iteracion Determinada
-IterDet : For Id from ExpArit to ExpArit '->' Instruccion end              { For $1 $2 $4 $6 $8 }
-        | For Id from ExpArit to ExpArit step ExpArit '->' Instruccion end { ForStep $1 $2 $4 $6 $8 $10 }
+IterDet : For Id from ExpArit to ExpArit '->' Bloque end              { For $1 $2 $4 $6 $8 }
+        | For Id from ExpArit to ExpArit step ExpArit '->' Bloque end { ForStep $1 $2 $4 $6 $8 $10 }
 
 -- Instrucciones I/O
 IOInstr : Print Expresion           { Print $1 $2 }
@@ -199,11 +203,11 @@ Asignacion :
     id '<-' Expresion                           { Asignacion $1 $3 }
 
 -- Iteración Indeterminada
-IteracionInd : While ExpBool '->' Instruccion end            { WhileInstr $2 $4 }
+IteracionInd : While ExpBool '->' Bloque end            { WhileInstr $2 $4 }
 
 -- Alcance
-IncAlcance : With Variables begin Instruccion end            { ConDeclaracion $1 $2 $4 }
-           | Begin Instruccion end                           { SinDeclaracion $1 $2 }
+IncAlcance : With Variables begin Bloque end            { ConDeclaracion $1 $2 $4 }
+           | Begin Bloque end                           { SinDeclaracion $1 $2 }
 
 -- Instruccion Punto
 PuntoInstr : id '.' Num                                      { Punto $1 $2 $3  }
