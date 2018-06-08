@@ -17,7 +17,7 @@ data Programa
     deriving Show
 
 instance ToStr Programa where
-    toStr (Programa incalcance) tabs = putTabs tabs "" ++ toStr incalcance tabs
+    toStr (Programa incalcance) tabs = toStr incalcance tabs
 
 -- Para la declariacion o inicializacion de una variable
 data Inicializacion

@@ -122,8 +122,8 @@ ExpArit : ExpArit '+' ExpArit     { Suma $1 $2 $3 }
         | ExpArit '%' ExpArit     { Mod $1 $2 $3 }
         | Menos ExpArit %prec NEG { MenosUnario $1 $2 }
         | '(' ExpArit ')'         { $2 }
-        | Id                      { IdArit $1 }
-        | Num                     { LitArit $1 }
+        | id                      { IdArit $1 }
+        | num                     { LitArit $1 }
         | '#' ExpChar             { Ascii $1 $2 }
 
 ExpRel : ExpArit '<'  ExpArit     { MenorQue $1 $2 $3 }
@@ -159,8 +159,6 @@ ExpArray : ExpArray '::' ExpArray       { ConcatenacionArray $1 $2 $3 }
 
 
 Menos : '-'                       { $1 }
-Id    : id                        { $1 }
-Num   : num                       { $1 }
 -- Lista de las variables a declarar e inicializar
 Identificadores : Identificadores ',' Inicializacion        { $3:$1 }
                 | Inicializacion                            { [$1] }
@@ -172,7 +170,6 @@ Inicializacion : id                                       { Declaracion $1 }
 --------------------------------- INSTRUCCIONES -------------------------------
 Bloque : {- labmda -}                                      { [EmptyInstr] }
        | Instruccion Bloque                                { $1:$2 }
-       | Instruccion                                       { [$1] }
 
 Instruccion : Condicional                                 { IfInstr $1 }
             | IterDet                                     { ForInstr $1 }
@@ -184,15 +181,15 @@ Instruccion : Condicional                                 { IfInstr $1 }
 
             -- Condicionales
 Condicional : If ExpBool '->' Bloque end                       { If $2 $4 }
-            | If ExpBool '->' Bloque otherwise Bloque end { IfOtherwise $2 $4 $6 }
+            | If ExpBool '->' Bloque otherwise '->' Bloque end { IfOtherwise $2 $4 $7 }
 
 -- Iteracion Determinada
-IterDet : For Id from ExpArit to ExpArit '->' Bloque end              { For $1 $2 $4 $6 $8 }
-        | For Id from ExpArit to ExpArit step ExpArit '->' Bloque end { ForStep $1 $2 $4 $6 $8 $10 }
+IterDet : For id from ExpArit to ExpArit '->' Bloque end              { For $1 $2 $4 $6 $8 }
+        | For id from ExpArit to ExpArit step ExpArit '->' Bloque end { ForStep $1 $2 $4 $6 $8 $10 }
 
 -- Instrucciones I/O
 IOInstr : Print Expresion           { Print $1 $2 }
-        | Read  Id                  { Read $1 $2 }
+        | Read  id                  { Read $1 $2 }
 
 -- Asignacion
 Asignacion : 
