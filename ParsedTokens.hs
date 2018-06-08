@@ -64,7 +64,7 @@ instance ToStr Expresion where
     toStr (ExpArit x) tabs = toStr x tabs
     toStr (ExpBool x) tabs = toStr x tabs
     toStr (ExpChar x) tabs = toStr x tabs
-    toStr (ExpArray x) tabs = putTabs tabs (show x)
+    toStr (ExpArray x) tabs = toStr x tabs
 
 -- Expresion Aritmética    
 data ExpArit =
@@ -184,6 +184,26 @@ data ExpArray =
     | IndexacionArray ExpArray ExpArit
     | IdArray TkObject
     deriving Show
+
+instance ToStr ExpArray where
+    toStr (ConcatenacionArray exparray1 obj exparray2) tabs =
+        putTabs tabs "CONCAT_ARR" ++ 
+        toStr exparray1 (tabs+2) ++
+        putTabs (tabs+2) (show obj) ++
+        toStr exparray2 (tabs+2)
+
+    toStr (ShiftArray obj exparray) tabs =
+        putTabs tabs "SHIF_ARR" ++
+        putTabs (tabs+2) (show obj) ++
+        toStr exparray (tabs+2)
+
+    toStr (IndexacionArray exparray exparit) tabs =
+        putTabs tabs "INDEX_ARR" ++
+        putTabs (tabs+2) "arreglo:" ++ toStr exparray (tabs+2) ++
+        putTabs (tabs+2) "indice:" ++ toStr exparit (tabs+2)
+
+    toStr (IdArray obj) tabs =
+        putTabs tabs "IDENTIFICADOR" ++ (putTabs (tabs+2) (show obj))
 
 --------------------------------- INSTRUCCIONES -------------------------------
 -- Instruccion
