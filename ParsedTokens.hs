@@ -15,7 +15,7 @@ data Programa
     deriving Show
 
 instance ToStr Programa where
-    toStr (Programa programa) tabs = putTabs tabs "" ++ toStr programa (tabs)
+    toStr (Programa programa) tabs = putTabs tabs "" ++ toStr programa tabs
 
 -- Para la declariacion o inicializacion de una variable
 data Inicializacion
@@ -36,15 +36,20 @@ data Tipo =
     deriving Show
 
 instance ToStr Tipo where
-    toStr (TipoPrimitivo obj) tabs = putTabs tabs "TIPO" ++ putTabs (tabs+2) (show obj)
-    toStr (TipoArreglo obj exparit tipo) tabs = putTabs tabs "ARREGLO" ++ 
-        putTabs (tabs+2) "tamaño" ++ toStr exparit (tabs+2) ++
-        putTabs (tabs+2) "tipo de los elementos" ++ toStr tipo (tabs+2)
+    toStr (TipoPrimitivo obj) tabs = putTabs tabs "TIPO PRIMITIVO" ++ putTabs (tabs+2) (show obj)
+    toStr (TipoArreglo obj exparit tipo) tabs = putTabs tabs "TIPO ARREGLO" ++ 
+        putTabs (tabs+2) "tamaño:" ++ toStr exparit (tabs+2) ++
+        putTabs (tabs+2) "tipo de los elementos:" ++ toStr tipo (tabs+2)
 
 -- Variables
 data Variables =
     Variables [Inicializacion] Tipo
     deriving Show
+
+instance ToStr Variables where
+    toStr (Variables xs tipo) tabs = putTabs tabs "DECLARACION/INICIALIZACION DE VARIABLES" ++ 
+        concatMap (\x -> toStr x (tabs+2)) xs ++ 
+        toStr tipo (tabs+2)
 
 -------------------------------- EXPRESIONES ----------------------------------
 -- Expresion
@@ -191,7 +196,7 @@ instance ToStr Instruccion where
 
     toStr (IncAlcanceInstr x) tabs = putTabs tabs "" ++ toStr x (tabs+2)
     
-    toStr (Secuenciacion x y) tabs = putTabs tabs "" ++ toStr x (tabs+2) ++ toStr y (tabs+2)
+    toStr (Secuenciacion x y) tabs = putTabs tabs "SECUENCIACIÓN" ++ toStr x (tabs+2) ++ toStr y (tabs+2)
 
     toStr (PuntoInstr x) tabs = putTabs tabs "" ++ show x
 
@@ -240,8 +245,10 @@ data IncAlcanceInstr =
     deriving Show
 
 instance ToStr IncAlcanceInstr where
-    toStr (ConDeclaracion x y z) tabs = putTabs tabs "" ++ show x ++ show y ++ toStr z (tabs+2)
-    toStr (SinDeclaracion x y) tabs = putTabs tabs "" ++ show x ++ toStr y (tabs+2)
+    toStr (ConDeclaracion _ ys instruccion) tabs = putTabs tabs "INC_ALCANCE" ++ 
+        concatMap (\y -> toStr y (tabs+2)) ys ++ 
+        toStr instruccion (tabs+2)
+    toStr (SinDeclaracion _ y) tabs = putTabs tabs "INC_ALCANCE" ++ toStr y (tabs+2)
 
 -- Instrucción de Punto
 data PuntoInstr =
