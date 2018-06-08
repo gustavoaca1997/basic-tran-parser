@@ -2,7 +2,12 @@ module Parsed where
 import Control.Applicative
 import Lex
 -- Monad para manejar errores
-data Parsed a = Ok a | Failed String deriving Show
+data Parsed a = Ok a | Failed String
+
+-- Instanciamos el typeclass Show
+instance (Show a) => Show (Parsed a) where
+    show (Failed msg) = msg
+    show (Ok a) = show a
 
 -- Instanciamos el typeclass Functor
 instance Functor Parsed where
