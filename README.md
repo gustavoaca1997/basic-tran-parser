@@ -42,9 +42,9 @@ $ ghc Lex.x
 # quizá tengas que usar 'stack ghc'
 ```
 
-### Parser
+## Parser
 
-## ¿Qué es?
+### ¿Qué es?
 Un perser es un programa informático que analiza una cadena de símbolos (sintácticamente) de acuerdo a las reglas de una gramática formal.
 
 #### Herramienta usada
