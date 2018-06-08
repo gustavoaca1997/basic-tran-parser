@@ -1,11 +1,13 @@
 {
 module Parser where
 import Lex
+import Parsed
 }
 
 %name parser
 %tokentype { TkObject }
 %error { parseError }
+%monad { Parsed }
 
 %token
 
@@ -84,7 +86,7 @@ not         { TkObject TkNegacion _ }
 
 
 -- Variable Inicial
-S: IncAlcance                { Programa $1 }
+S: IncAlcance                { (Programa $1) }
 
 With : with                                        { $1 }
 
@@ -225,8 +227,8 @@ Boolean : true      { $1 }
         | false     { $1 }
 {
 
-parseError :: [TkObject] -> a
-parseError _ = error "Parse error"
+parseError :: [TkObject] -> Parsed a
+parseError tokens = fail "Parse error"
 
 -- Tipos de datos a retornar
 -- Variable inicial
