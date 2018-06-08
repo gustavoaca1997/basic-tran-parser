@@ -228,7 +228,7 @@ instance ToStr Instruccion where
 
     toStr (WhileInstr x y) tabs = putTabs tabs "" ++ show x ++ printLista tabs y
 
-    toStr (IOInstr x) tabs = putTabs tabs "" ++ show x
+    toStr (IOInstr x) tabs = putTabs tabs "" ++ toStr x tabs
 
     toStr (AsignacionInstr x) tabs = toStr x tabs
 
@@ -287,6 +287,15 @@ data IOInstr =
     Print TkObject Expresion
     | Read TkObject TkObject
     deriving Show
+
+instance ToStr IOInstr where
+    toStr (Print _ expresion) tabs = putTabs tabs "INSTRUCCION I/O" ++
+        putTabs (tabs+2) "funcion: print" ++
+        putTabs (tabs+2) "expresion:" ++
+        toStr expresion (tabs+2)
+    toStr (Read _ variable) tabs = putTabs tabs "INSTRUCCION I/O" ++
+        putTabs (tabs+2) "funcion: read" ++
+        putTabs (tabs+2) "variable:" ++ show variable
 
 -- Instrucción de Alcance
 data IncAlcanceInstr =
