@@ -275,12 +275,12 @@ instance ToStr ForInstr where
     toStr (For _ _ from to bloque) tabs = putTabs tabs "ITERACION DETERMINADA" ++
         putTabs (tabs+2) "inicio:" ++ toStr from (tabs+2) ++
         putTabs (tabs+2) "final:" ++ toStr to (tabs+2) ++
-        printLista tabs bloque
+        putTabs (tabs+2) "bloque:" ++ printLista tabs bloque
     toStr (ForStep _ _ from to step bloque) tabs = putTabs tabs "ITERACION DETERMINADA" ++
         putTabs (tabs+2) "inicio:" ++ toStr from (tabs+2) ++
         putTabs (tabs+2) "final:" ++ toStr to (tabs+2) ++
         putTabs (tabs+2) "step:" ++ toStr step (tabs+2) ++
-        printLista tabs bloque
+        putTabs (tabs+2) "bloque:" ++ printLista tabs bloque
 
 -- Instrucción de I/O
 data IOInstr =
