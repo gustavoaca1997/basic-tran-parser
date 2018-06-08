@@ -184,7 +184,7 @@ Instruccion : {- lambda -}                                { EmptyInstr }
 
 -- Condicionales
 Condicional : If ExpBool '->' Instruccion end                       { If $2 $4 }
-            | If ExpBool '->' Instruccion otherwise Instruccion end { IfOtherwise $2 $4 $6 }
+            | If ExpBool '->' Instruccion otherwise '->' Instruccion end { IfOtherwise $2 $4 $7 }
 
 -- Iteracion Determinada
 IterDet : For Id from ExpArit to ExpArit '->' Instruccion end              { For $1 $2 $4 $6 $8 }

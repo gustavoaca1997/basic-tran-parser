@@ -96,7 +96,7 @@ instance ToStr ExpArit where
 
     toStr (MenosUnario obj exparit) tabs = (putTabs tabs "MENOS UNARIO") ++ (putTabs (tabs+2) (show obj)) ++ (toStr exparit (tabs+2))
 
-    toStr (LitArit obj) tabs = (putTabs tabs "LITERAL") ++ (putTabs (tabs+2) (show obj))
+    toStr (LitArit obj) tabs = (putTabs tabs "LITERAL ARITMETICO") ++ (putTabs (tabs+2) (show obj))
 
     toStr (IdArit obj) tabs = (putTabs tabs "IDENTIFICADOR") ++ (putTabs (tabs+2) (show obj))
 
@@ -149,7 +149,7 @@ instance ToStr ExpBool where
 
     toStr (IdBool obj) tabs = putTabs tabs "IDENTIFICADOR" ++ (putTabs (tabs+2) (show obj))
 
-    toStr (LitBool obj) tabs = (putTabs tabs "LITERAL") ++ (putTabs (tabs+2) (show obj))
+    toStr (LitBool obj) tabs = (putTabs tabs "LITERAL BOOLEANO") ++ (putTabs (tabs+2) (show obj))
 
 -- Expresion de caracteres
 data ExpChar =
@@ -175,7 +175,7 @@ instance ToStr ExpChar where
 
     toStr (IdChar obj) tabs = putTabs tabs "IDENTIFICADOR" ++ (putTabs (tabs+2) (show obj))
 
-    toStr (LitChar obj) tabs = (putTabs tabs "LITERAL") ++ (putTabs (tabs+2) (show obj))
+    toStr (LitChar obj) tabs = (putTabs tabs "LITERAL DE CARACTER") ++ (putTabs (tabs+2) (show obj))
 
 -- Expresion de arreglos
 data ExpArray =
@@ -231,7 +231,7 @@ instance ToStr Instruccion where
 
     toStr (AsignacionInstr x) tabs = toStr x tabs
 
-    toStr (IncAlcanceInstr x) tabs = putTabs tabs "" ++ toStr x (tabs+2)
+    toStr (IncAlcanceInstr x) tabs = toStr x tabs
     
     toStr (Secuenciacion x y) tabs = putTabs tabs "SECUENCIACIÓN" ++ toStr x (tabs+2) ++ toStr y (tabs+2)
 
@@ -246,11 +246,14 @@ data IfInstr =
     deriving Show
 
 instance ToStr IfInstr where
-    toStr (If expbool instruccion) tabs = putTabs tabs "CONDICIONAL" ++ putTabs (tabs+2) "guardia:" ++ toStr expbool (tabs+2) ++
+    toStr (If expbool instruccion) tabs = putTabs tabs "CONDICIONAL" ++ 
+        putTabs (tabs+2) "guardia:" ++ toStr expbool (tabs+2) ++
         putTabs (tabs+2) "exito:" ++ toStr instruccion (tabs+2)
 
-    toStr (IfOtherwise expbool instruccion1 instruccion2) tabs = putTabs tabs "CONDICIONAL (con otherwise)" ++ toStr expbool (tabs+22) ++ 
-        toStr instruccion1 (tabs+2) ++ toStr instruccion2 (tabs+2)
+    toStr (IfOtherwise expbool instruccion1 instruccion2) tabs = putTabs tabs "CONDICIONAL" ++ 
+        putTabs (tabs+2) "guardia:" ++ toStr expbool (tabs+2) ++ 
+        putTabs (tabs+2) "exito:" ++ toStr instruccion1 (tabs+2) ++ 
+        putTabs (tabs+2) "fracaso:" ++ toStr instruccion2 (tabs+2)
 
 -- Instrucción de For
 data ForInstr =
@@ -304,4 +307,4 @@ data PuntoInstr =
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Funcion para indentar
 putTabs :: Int -> String -> String
-putTabs tabs str = "\n" ++ (replicate tabs '\t') ++ str
+putTabs tabs str = "\n" ++ (replicate (4*tabs) ' ') ++ str
