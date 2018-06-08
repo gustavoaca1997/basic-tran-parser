@@ -86,9 +86,9 @@ not         { TkObject TkNegacion _ }
 
 
 -- Variable Inicial
-S: IncAlcance                { (Programa $1) }
+S: IncAlcance                { $1 }
 
-With : with                                        { $1 }
+With : with                                        { % return $1 }
 
 -- Declaracion de las variables
 Variables : Var Identificadores ':' Tipo               { [Variables (reverse $2) $4] }
@@ -195,9 +195,7 @@ IOInstr : Print Expresion           { Print $1 $2 }
 
 -- Asignacion
 Asignacion : 
-    id '<-' Literal                         { Asignacion $1 (ExpArit (LitArit $3)) }
-    | id '<-' ExpArit                          { Asignacion $1 (ExpArit $3) }
-    | id '<-' ExpBool                          { Asignacion $1 (ExpBool $3) }
+    id '<-' Expresion                           { Asignacion $1 $3 }
 
 -- Iteración Indeterminada
 IteracionInd : While ExpBool '->' Instruccion end            { WhileInstr $2 $4 }
@@ -228,7 +226,7 @@ Boolean : true      { $1 }
 {
 
 parseError :: [TkObject] -> Parsed a
-parseError tokens = fail "Parse error"
+parseError = \line -> fail (show (line!!0) ++ ": parse error")
 
 -- Tipos de datos a retornar
 -- Variable inicial

@@ -8,5 +8,5 @@ main = do
     args <- getArgs
     filecontents <- readFile $ head args
     let tokens = scanTokens filecontents
-    print tokens
+    -- print tokens
     print $ parser tokens

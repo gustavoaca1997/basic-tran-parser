@@ -1,5 +1,6 @@
 module Parsed where
 import Control.Applicative
+import Lex
 -- Monad para manejar errores
 data Parsed a = Ok a | Failed String deriving Show
 
@@ -20,9 +21,3 @@ instance Monad Parsed where
     fail msg = Failed msg
     (Failed msg) >>= f = Failed msg
     (Ok a) >>= f = f a
--- manejador de errores
-catchParsed :: Parsed a -> (String -> Parsed a) -> Parsed a
-catchParsed m k =
-    case m of
-        Ok a -> Ok a
-        Failed e -> k e
