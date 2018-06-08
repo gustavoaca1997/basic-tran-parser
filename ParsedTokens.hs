@@ -156,7 +156,6 @@ instance ToStr ExpBool where
 data ExpChar =
     SiguienteChar ExpChar TkObject
     | AnteriorChar ExpChar TkObject
-    | Ascii TkObject ExpChar
     | IdChar TkObject
     | LitChar TkObject
     deriving Show
