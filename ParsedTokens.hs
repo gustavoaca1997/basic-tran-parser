@@ -234,7 +234,7 @@ instance ToStr Instruccion where
 
     toStr (IncAlcanceInstr x) tabs = toStr x tabs
 
-    toStr (PuntoInstr x) tabs = putTabs tabs "" ++ show x
+    toStr (PuntoInstr x) tabs = putTabs tabs "" ++ toStr x tabs
 
     toStr (EmptyInstr) tabs = ""
 
@@ -316,12 +316,13 @@ data PuntoInstr =
     Punto
         TkObject -- Solo id
         TkObject -- . position
-        TkObject -- id o num
-    | PuntoExp
-        TkObject -- Solo id
-        TkObject -- . position
-        ExpArit  -- Expresion aritmetica
+        ExpArit -- id o num
     deriving Show
+
+instance ToStr PuntoInstr where
+    toStr (Punto (TkObject (TkId id) _) _ expresion) tabs = putTabs tabs "INSTR_PUNTO" ++
+        putTabs (tabs+2) "variable:" ++ id ++
+        putTabs (tabs+2) "expresion:" ++ toStr expresion (tabs+2)
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Funcion para indentar
