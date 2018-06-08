@@ -226,7 +226,9 @@ instance ToStr Instruccion where
 
     toStr (ForInstr x) tabs = putTabs tabs "" ++ toStr x tabs
 
-    toStr (WhileInstr x y) tabs = putTabs tabs "" ++ show x ++ printLista tabs y
+    toStr (WhileInstr expbool y) tabs = putTabs tabs "ITERACION INDETERMINADA" ++
+        putTabs (tabs+2) "guardia:" ++ toStr expbool (tabs+2) ++
+        putTabs (tabs+2) "bloque:" ++ printLista tabs y
 
     toStr (IOInstr x) tabs = putTabs tabs "" ++ toStr x tabs
 
