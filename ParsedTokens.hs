@@ -1,0 +1,231 @@
+module ParsedTokens where
+import Lex
+
+-- Typeclass para poder imprimir el Arból Sintáctica Abstracto
+class ToStr a where
+    -- Funcion que convierte en string un token parseado
+    -- donde el entero es el número de tabs
+    toStr :: a -> Int -> String
+
+-- Tipos de datos a retornar
+-- Variable inicial
+data Programa
+    =  Programa IncAlcanceInstr
+    deriving Show
+
+instance ToStr Programa where
+    toStr (Programa programa) tabs = putTabs tabs "" ++ toStr programa (tabs)
+
+-- Para la declariacion o inicializacion de una variable
+data Inicializacion
+    = Asignacion TkObject Expresion -- id <- n, id <- 2 + x
+    | Declaracion TkObject              -- id
+    deriving Show
+
+instance ToStr Inicializacion where
+    toStr (Asignacion obj exp) tabs = putTabs tabs "ASIGNACION" ++ 
+        putTabs (tabs+2) "IDENTIFICADOR\n" ++ putTabs (tabs+4) (show obj) ++ toStr exp (tabs+2)
+
+-- Tipos de datos
+data Tipo =
+    TipoPrimitivo TkObject
+    | TipoArreglo TkObject ExpArit Tipo
+    deriving Show
+
+-- Variables
+data Variables =
+    Variables [Inicializacion] Tipo
+    deriving Show
+
+-------------------------------- EXPRESIONES ----------------------------------
+-- Expresion
+data Expresion =
+    ExpArit ExpArit
+    | ExpBool ExpBool
+    | ExpChar ExpChar
+    | ExpArray ExpArray
+    deriving Show
+
+instance ToStr Expresion where
+    toStr (ExpArit x) tabs = toStr x tabs
+    toStr (ExpBool x) tabs = toStr x tabs
+    toStr (ExpChar x) tabs = putTabs tabs (show x)
+    toStr (ExpArray x) tabs = putTabs tabs (show x)
+
+-- Expresion Aritmética    
+data ExpArit =
+    Suma ExpArit TkObject ExpArit
+    | Resta ExpArit TkObject ExpArit
+    | Mult ExpArit TkObject ExpArit
+    | Div ExpArit TkObject ExpArit
+    | Mod ExpArit TkObject ExpArit
+    | MenosUnario TkObject ExpArit
+    | LitArit TkObject
+    | IdArit  TkObject
+    deriving Show
+
+instance ToStr ExpArit where
+    toStr (Suma exparit1 obj exparit2) tabs = (putTabs tabs "SUMA") ++ (toStr exparit1 (tabs+2)) ++ 
+        (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
+
+    toStr (Resta exparit1 obj exparit2) tabs = (putTabs tabs "RESTA") ++ (toStr exparit1 (tabs+2)) ++ 
+        (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
+
+    toStr (Mult exparit1 obj exparit2) tabs = (putTabs tabs "MULTIPLICACIÓN") ++ (toStr exparit1 (tabs+2)) ++ 
+        (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
+
+    toStr (Div exparit1 obj exparit2) tabs = (putTabs tabs "DIVISIÓN") ++ (toStr exparit1 (tabs+2)) ++ 
+        (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
+
+    toStr (Mod exparit1 obj exparit2) tabs = (putTabs tabs "MODULO") ++ (toStr exparit1 (tabs+2)) ++ 
+        (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
+
+    toStr (MenosUnario obj exparit) tabs = (putTabs tabs "MENOS UNARIO") ++ (putTabs (tabs+2) (show obj)) ++ (toStr exparit (tabs+2))
+
+    toStr (LitArit obj) tabs = (putTabs tabs "LITERAL") ++ (putTabs (tabs+2) (show obj))
+    
+    toStr (IdArit obj) tabs = (putTabs tabs "IDENTIFICADOR") ++ (putTabs (tabs+2) (show obj))
+
+-- Expresión Relacional
+data ExpRel =
+    MenorQue ExpArit TkObject ExpArit
+    | MayorQue ExpArit TkObject ExpArit
+    | MenorIgualQue ExpArit TkObject ExpArit
+    | MayorIgualQue ExpArit TkObject ExpArit
+    | Igual ExpArit TkObject ExpArit
+    | Distinto ExpArit TkObject ExpArit
+    deriving Show
+
+instance ToStr ExpRel where
+    toStr (MenorQue exparit1 obj exparit2) tabs = (putTabs tabs "MENOR_QUE") ++ (toStr exparit1 (tabs+2)) ++ 
+        (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
+
+    toStr (MayorQue exparit1 obj exparit2) tabs = (putTabs tabs "MAYOR_QUE") ++ (toStr exparit1 (tabs+2)) ++
+        (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
+
+    toStr (MenorIgualQue exparit1 obj exparit2) tabs = (putTabs tabs "MENOR_IG_QUE") ++ (toStr exparit1 (tabs+2)) ++ 
+        (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
+
+    toStr (MayorIgualQue exparit1 obj exparit2) tabs = (putTabs tabs "MAYOR_IG_QUE") ++ (toStr exparit1 (tabs+2)) ++ 
+        (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
+
+    toStr (Igual exparit1 obj exparit2) tabs = (putTabs tabs "IGUAL") ++ (toStr exparit1 (tabs+2)) ++ 
+        (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
+
+    toStr (Distinto exparit1 obj exparit2) tabs = (putTabs tabs "DISTINTO") ++ (toStr exparit1 (tabs+2)) ++ 
+        (putTabs (tabs+2) (show obj)) ++ (toStr exparit2 (tabs+2))
+
+-- Expresión Booleana/Lógica
+data ExpBool =
+    Relacion ExpRel -- 2 + n <= x
+    | OperadorBoolBin ExpBool TkObject ExpBool  -- B and (x > 2)
+    | OperadorBoolUn  TkObject ExpBool
+    | IdBool TkObject   -- if es_string
+    | LitBool TkObject  -- True, False
+    deriving Show
+
+instance ToStr ExpBool where
+    toStr (Relacion exprel) tabs = putTabs tabs "RELACION" ++ toStr exprel (tabs+2)
+    toStr (OperadorBoolBin expbool1 obj expbool2) tabs = putTabs tabs "OPERADOR_BOOL_BIN" ++ toStr expbool1 (tabs+2) ++ (putTabs (tabs+2) (show obj)) ++ toStr expbool2 (tabs+2)
+    toStr (OperadorBoolUn obj expbool) tabs = putTabs tabs "OPERADOR_BOOL_UN" ++ (putTabs (tabs+2) (show obj)) ++ toStr expbool (tabs+2)
+    toStr (IdBool obj) tabs = putTabs tabs "IDENTIFICADOR" ++ (putTabs (tabs+2) (show obj))
+    toStr (LitBool obj) tabs = (putTabs tabs "LITERAL") ++ (putTabs (tabs+2) (show obj))
+
+-- Expresion de caracteres
+data ExpChar =
+    SiguienteChar ExpChar TkObject
+    | AnteriorChar ExpChar TkObject
+    | Ascii TkObject ExpChar
+    | IdChar TkObject
+    | LitChar TkObject
+    deriving Show
+
+-- Expresion de arreglos
+data ExpArray =
+    ConcatenacionArray ExpArray TkObject ExpArray
+    | ShiftArray TkObject ExpArray
+    | IndexacionArray ExpArray ExpArit
+    | IdArray TkObject
+    deriving Show
+
+--------------------------------- INSTRUCCIONES -------------------------------
+
+data Instruccion =
+    IfInstr IfInstr
+    | ForInstr ForInstr
+    | WhileInstr ExpBool Instruccion
+    | IOInstr IOInstr
+    | AsignacionInstr Inicializacion
+    | IncAlcanceInstr IncAlcanceInstr
+    | Secuenciacion Instruccion Instruccion
+    | PuntoInstr PuntoInstr
+    -- | Asignacion (ver arriba en inicializacion)
+    | EmptyInstr
+    deriving Show
+
+instance ToStr Instruccion where
+    toStr (IfInstr x) tabs = toStr x tabs
+    toStr (ForInstr x) tabs = putTabs tabs "" ++ show x
+    toStr (WhileInstr x y) tabs = putTabs tabs "" ++ show x ++ toStr y (tabs+2)
+    toStr (IOInstr x) tabs = putTabs tabs "" ++ show x
+    toStr (AsignacionInstr x) tabs = toStr x tabs
+    toStr (IncAlcanceInstr x) tabs = putTabs tabs "" ++ toStr x (tabs+2)
+    toStr (Secuenciacion x y) tabs = putTabs tabs "" ++ toStr x (tabs+2) ++ toStr y (tabs+2)
+    toStr (PuntoInstr x) tabs = putTabs tabs "" ++ show x
+    toStr (EmptyInstr) tabs = ""
+
+data IfInstr =
+    If ExpBool Instruccion
+    | IfOtherwise ExpBool Instruccion Instruccion
+    deriving Show
+
+instance ToStr IfInstr where
+    toStr (If expbool instruccion) tabs = putTabs tabs "CONDICIONAL" ++ putTabs (tabs+2) "guardia:" ++ toStr expbool (tabs+2) ++
+        putTabs (tabs+2) "exito:" ++ toStr instruccion (tabs+2)
+    toStr (IfOtherwise expbool instruccion1 instruccion2) tabs = putTabs tabs "CONDICIONAL (con otherwise)" ++ toStr expbool (tabs+22) ++ 
+        toStr instruccion1 (tabs+2) ++ toStr instruccion2 (tabs+2)
+
+data ForInstr =
+    For
+        TkObject    -- posicion
+        TkObject    -- id
+        ExpArit     -- from
+        ExpArit     -- to
+        Instruccion -- Instruccion
+    | ForStep
+        TkObject    -- posicion
+        TkObject    -- id
+        ExpArit     -- from
+        ExpArit     -- to
+        ExpArit     -- step
+        Instruccion -- Instruccion
+    deriving Show
+
+data IOInstr =
+    Print TkObject Expresion
+    | Read TkObject TkObject
+    deriving Show
+
+data IncAlcanceInstr =
+    ConDeclaracion TkObject [Variables] Instruccion
+    | SinDeclaracion TkObject Instruccion
+    deriving Show
+
+instance ToStr IncAlcanceInstr where
+    toStr (ConDeclaracion x y z) tabs = putTabs tabs "" ++ show x ++ show y ++ toStr z (tabs+2)
+    toStr (SinDeclaracion x y) tabs = putTabs tabs "" ++ show x ++ toStr y (tabs+2)
+
+data PuntoInstr =
+    Punto
+        TkObject -- Solo id
+        TkObject -- . position
+        TkObject -- id o num
+    | PuntoExp
+        TkObject -- Solo id
+        TkObject -- . position
+        ExpArit  -- Expresion aritmetica
+    deriving Show
+
+-- Funcion para indentar
+putTabs :: Int -> String -> String
+putTabs tabs str = "\n" ++ (replicate tabs '\t') ++ str

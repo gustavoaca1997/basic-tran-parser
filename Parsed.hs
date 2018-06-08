@@ -1,13 +1,17 @@
 module Parsed where
 import Control.Applicative
 import Lex
+import ParsedTokens
 -- Monad para manejar errores
 data Parsed a = Ok a | Failed String
 
 -- Instanciamos el typeclass Show
-instance (Show a) => Show (Parsed a) where
+instance (ToStr a) => Show (Parsed a) where
     show (Failed msg) = msg
-    show (Ok a) = show a
+    show (Ok a) = toStr a 0
+
+-- toStr (Programa x) tabs = concatMap show (replicate tabs '\t') ++ toStr x (tabs+1)
+-- toStr x tabs = concatMap show (replicate tabs '\t') ++ show x
 
 -- Instanciamos el typeclass Functor
 instance Functor Parsed where

@@ -2,6 +2,7 @@
 module Parser where
 import Lex
 import Parsed
+import ParsedTokens
 }
 
 %name parser
@@ -86,7 +87,7 @@ not         { TkObject TkNegacion _ }
 
 
 -- Variable Inicial
-S: IncAlcance                { $1 }
+S: IncAlcance                { Programa $1 }
 
 With : with                                        { % return $1 }
 
@@ -227,137 +228,4 @@ Boolean : true      { $1 }
 
 parseError :: [TkObject] -> Parsed a
 parseError = \line -> fail (show (line!!0) ++ ": parse error")
-
--- Tipos de datos a retornar
--- Variable inicial
-data Programa
-    =  Programa IncAlcanceInstr
-    deriving Show
-
--- Para la declariacion o inicializacion de una variable
-data Inicializacion
-    = Asignacion TkObject Expresion -- id <- n, id <- 2 + x
-    | Declaracion TkObject              -- id
-    deriving Show
-
--- Tipos de datos
-data Tipo =
-    TipoPrimitivo TkObject
-    | TipoArreglo TkObject ExpArit Tipo
-    deriving Show
-
--- Variables
-data Variables =
-    Variables [Inicializacion] Tipo
-    deriving Show
-
--------------------------------- EXPRESIONES ----------------------------------
-
-data Expresion =
-    ExpArit ExpArit
-    | ExpBool ExpBool
-    | ExpChar ExpChar
-    | ExpArray ExpArray
-    deriving Show
-
-data ExpArit =
-    Suma ExpArit TkObject ExpArit
-    | Resta ExpArit TkObject ExpArit
-    | Mult ExpArit TkObject ExpArit
-    | Div ExpArit TkObject ExpArit
-    | Mod ExpArit TkObject ExpArit
-    | MenosUnario TkObject ExpArit
-    | LitArit TkObject
-    | IdArit  TkObject
-    deriving Show
-
-data ExpRel =
-    MenorQue ExpArit TkObject ExpArit
-    | MayorQue ExpArit TkObject ExpArit
-    | MenorIgualQue ExpArit TkObject ExpArit
-    | MayorIgualQue ExpArit TkObject ExpArit
-    | Igual ExpArit TkObject ExpArit
-    | Distinto ExpArit TkObject ExpArit
-    deriving Show
-
-
-data ExpBool =
-    Relacion ExpRel -- 2 + n <= x
-    | OperadorBoolBin ExpBool TkObject ExpBool  -- B and (x > 2)
-    | OperadorBoolUn  TkObject ExpBool
-    | IdBool TkObject   -- if es_string
-    | LitBool TkObject  -- True, False
-    deriving Show
-
-data ExpChar =
-    SiguienteChar ExpChar TkObject
-    | AnteriorChar ExpChar TkObject
-    | Ascii TkObject ExpChar
-    | IdChar TkObject
-    | LitChar TkObject
-    deriving Show
-
-data ExpArray =
-    ConcatenacionArray ExpArray TkObject ExpArray
-    | ShiftArray TkObject ExpArray
-    | IndexacionArray ExpArray ExpArit
-    | IdArray TkObject
-    deriving Show
-
---------------------------------- INSTRUCCIONES -------------------------------
-
-data Instruccion =
-    IfInstr IfInstr
-    | ForInstr ForInstr
-    | WhileInstr ExpBool Instruccion
-    | IOInstr IOInstr
-    | AsignacionInstr Inicializacion
-    | IncAlcanceInstr IncAlcanceInstr
-    | Secuenciacion Instruccion Instruccion
-    | PuntoInstr PuntoInstr
-    -- | Asignacion (ver arriba en inicializacion)
-    | EmptyInstr
-    deriving Show
-
-data IfInstr =
-    If ExpBool Instruccion
-    | IfOtherwise ExpBool Instruccion Instruccion
-    deriving Show
-
-data ForInstr =
-    For
-        TkObject    -- posicion
-        TkObject    -- id
-        ExpArit     -- from
-        ExpArit     -- to
-        Instruccion -- Instruccion
-    | ForStep
-        TkObject    -- posicion
-        TkObject    -- id
-        ExpArit     -- from
-        ExpArit     -- to
-        ExpArit     -- step
-        Instruccion -- Instruccion
-    deriving Show
-
-data IOInstr =
-    Print TkObject Expresion
-    | Read TkObject TkObject
-    deriving Show
-
-data IncAlcanceInstr =
-    ConDeclaracion TkObject [Variables] Instruccion
-    | SinDeclaracion TkObject Instruccion
-    deriving Show
-
-data PuntoInstr =
-    Punto
-        TkObject -- Solo id
-        TkObject -- . position
-        TkObject -- id o num
-    | PuntoExp
-        TkObject -- Solo id
-        TkObject -- . position
-        ExpArit  -- Expresion aritmetica
-    deriving Show
 }
