@@ -15,7 +15,7 @@ data Programa
     deriving Show
 
 instance ToStr Programa where
-    toStr (Programa programa) tabs = putTabs tabs "" ++ toStr programa tabs
+    toStr (Programa incalcance) tabs = putTabs tabs "" ++ toStr incalcance tabs
 
 -- Para la declariacion o inicializacion de una variable
 data Inicializacion
@@ -63,7 +63,7 @@ data Expresion =
 instance ToStr Expresion where
     toStr (ExpArit x) tabs = toStr x tabs
     toStr (ExpBool x) tabs = toStr x tabs
-    toStr (ExpChar x) tabs = putTabs tabs (show x)
+    toStr (ExpChar x) tabs = toStr x tabs
     toStr (ExpArray x) tabs = putTabs tabs (show x)
 
 -- Expresion Aritmética    
@@ -160,6 +160,23 @@ data ExpChar =
     | LitChar TkObject
     deriving Show
 
+instance ToStr ExpChar where
+    toStr (SiguienteChar expchar obj) tabs = putTabs tabs "SIG_CHAR" ++ 
+        toStr expchar (tabs+2) ++
+        putTabs (tabs+2) (show obj)
+
+    toStr (AnteriorChar expchar obj) tabs = putTabs tabs "ANT_CHAR" ++ 
+        toStr expchar (tabs+2) ++
+        putTabs (tabs+2) (show obj)
+
+    toStr (Ascii obj expchar) tabs = putTabs tabs "ASCII" ++
+        putTabs (tabs+2) (show obj) ++
+        toStr expchar (tabs+2)
+
+    toStr (IdChar obj) tabs = putTabs tabs "IDENTIFICADOR" ++ (putTabs (tabs+2) (show obj))
+
+    toStr (LitChar obj) tabs = (putTabs tabs "LITERAL") ++ (putTabs (tabs+2) (show obj))
+
 -- Expresion de arreglos
 data ExpArray =
     ConcatenacionArray ExpArray TkObject ExpArray
@@ -248,7 +265,9 @@ instance ToStr IncAlcanceInstr where
     toStr (ConDeclaracion _ ys instruccion) tabs = putTabs tabs "INC_ALCANCE" ++ 
         concatMap (\y -> toStr y (tabs+2)) ys ++ 
         toStr instruccion (tabs+2)
-    toStr (SinDeclaracion _ y) tabs = putTabs tabs "INC_ALCANCE" ++ toStr y (tabs+2)
+
+    toStr (SinDeclaracion _ instruccion) tabs = putTabs tabs "INC_ALCANCE" ++ 
+        toStr instruccion (tabs+2)
 
 -- Instrucción de Punto
 data PuntoInstr =
