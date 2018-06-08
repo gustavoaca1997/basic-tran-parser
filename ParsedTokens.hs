@@ -224,7 +224,7 @@ data Instruccion =
 instance ToStr Instruccion where
     toStr (IfInstr x) tabs = toStr x tabs
 
-    toStr (ForInstr x) tabs = putTabs tabs "" ++ show x
+    toStr (ForInstr x) tabs = putTabs tabs "" ++ toStr x tabs
 
     toStr (WhileInstr x y) tabs = putTabs tabs "" ++ show x ++ printLista tabs y
 
@@ -270,6 +270,17 @@ data ForInstr =
         ExpArit     -- step
         [Instruccion] -- Instruccion
     deriving Show
+
+instance ToStr ForInstr where
+    toStr (For _ _ from to bloque) tabs = putTabs tabs "ITERACION DETERMINADA" ++
+        putTabs (tabs+2) "inicio:" ++ toStr from (tabs+2) ++
+        putTabs (tabs+2) "final:" ++ toStr to (tabs+2) ++
+        printLista tabs bloque
+    toStr (ForStep _ _ from to step bloque) tabs = putTabs tabs "ITERACION DETERMINADA" ++
+        putTabs (tabs+2) "inicio:" ++ toStr from (tabs+2) ++
+        putTabs (tabs+2) "final:" ++ toStr to (tabs+2) ++
+        putTabs (tabs+2) "step:" ++ toStr step (tabs+2) ++
+        printLista tabs bloque
 
 -- Instrucción de I/O
 data IOInstr =
