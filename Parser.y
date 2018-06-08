@@ -81,6 +81,9 @@ not         { TkObject TkNegacion _ }
 %left or
 %left and
 %left not
+%left '::'
+%right '$'
+%right '['
 %left NEG
 -- Grammar
 %%
@@ -132,20 +135,13 @@ ExpRel : ExpArit '<'  ExpArit     { MenorQue $1 $2 $3 }
 
 -- Expresiones Booleanas
 ExpBool : ExpRel                            { Relacion $1 }
-        | ExpBool OperadorLogico ExpRel     { OperadorBoolBin $1 $2 (Relacion $3) }
-        | ExpBool OperadorLogico true       { OperadorBoolBin $1 $2 (LitBool $3) }
-        | ExpBool OperadorLogico false      { OperadorBoolBin $1 $2 (LitBool $3) }
-        | ExpBool OperadorLogico id         { OperadorBoolBin $1 $2 (IdBool $3) }
-        | Not ExpBool  %prec NEG            { OperadorBoolUn $1 $2 }
+        | ExpBool and ExpBool               { OperadorBoolBin $1 $2 $3 }
+        | ExpBool or ExpBool                { OperadorBoolBin $1 $2 $3 }
+        | not ExpBool  %prec NEG            { OperadorBoolUn $1 $2 }
         | id                                { IdBool $1 }
         | true                              { LitBool $1 }
         | false                              { LitBool $1 }
         | '(' ExpBool ')'                   { $2 }
-
-OperadorLogico :
-    and { $1 }
-    | or { $1 }
-Not : not { $1 }
 
 -- Expresiones con caracteres
 ExpChar : ExpChar '++'          { SiguienteChar $1 $2 }
@@ -221,13 +217,6 @@ Read : read   { $1 }
 If : if         { $1 }
 For : for       { $1 }
 
--- Literales
-Literal : caracter { $1 }
-        | num { $1 }
-        | Boolean { $1 }
-
-Boolean : true      { $1 }
-        | false     { $1 }
 {
 
 parseError :: [TkObject] -> Parsed a
