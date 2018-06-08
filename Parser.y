@@ -215,5 +215,9 @@ For : for       { $1 }
 {
 
 parseError :: [TkObject] -> Parsed a
-parseError = \line -> fail (show (line) ++ ": parse error")
+parseError = \line ->
+        if length line > 0 then
+                fail $ show (line!!0) ++ ": parse error"
+        else
+                fail "There was a problem parsing input"
 }
