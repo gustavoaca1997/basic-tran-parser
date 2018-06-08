@@ -1,9 +1,9 @@
-# Lexer de Basic-Translation
+# Interpretador de Basic-Translation
 
 Integrantes:
 * German Robayo (14-10924)
 * Gustavo Castellanos (14-10192)
-
+## Lexer 
 ### ¿Que es?
 
 Un lexer es una herramienta que nos permite analizar una secuencia de caracteres y extraer de ella _tokens_ (análisis lexicográfico) para su posterior parseo.
@@ -45,3 +45,20 @@ Finalmente, se usa de la siguiente forma:
 ```bash
 $ ./Lex <archivo>
 ```
+
+## Parser
+
+### Herramienta usada
+
+Se usó como lenguaje de programación *__Haskell__* y como herramienta generadora de parsers *__Happy__*.
+El uso de Happy  nos enfocó en solamente determinar la gramática del lenguaje.
+
+### Uso del programa
+
+Primero debe compilar el Lexer y el Parser:
+```bash
+./compile.sh
+```
+Luego ejecutar el analizador:
+```bash
+$ ./BasicTran <archivo>
