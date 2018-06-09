@@ -27,21 +27,6 @@ Para el filtrado de errores se creó un token llamado `TkErr`. Cuando invocamos 
 
 Ninguna. Aunque se pudieron importar ciertas funciones se decidió para practicar mas el lenguaje que nosotros mismos implementaramos dichas funciones.
 
-#### Compilación
-
-Primero debes generar el archivo `.hs`
-
-```bash
-$ alex Lex.x
-```
-
-Luego compilar el archivo resultante mediante `ghc`
-
-```bash
-$ ghc Lex.x
-# quizá tengas que usar 'stack ghc'
-```
-
 ## Parser
 
 ### ¿Qué es?
